@@ -1,0 +1,57 @@
+body{
+    margin: 0;
+    background-color: aquamarine;
+    text-align: center;
+}
+
+h1{
+    font-family: monospace;
+    color: darkred;
+}
+
+form{
+    margin-top: 30px;
+    display: inline-block;
+    border: solid .5px white;
+    padding: 30px; 
+}
+
+label{
+    font-family: 'sylfaen', sans-serif;
+    font-size: 20px;
+    color: black;
+    margin-top: 10px;
+}
+
+input{
+    margin: 8px;
+    height: 20px;
+    font-family: 'proxima nova', sans-serif;
+    font-size: 14px;
+    width: 200px;
+}
+
+input[type=submit]{
+    font-size: 22px;
+    height: 40px;
+    padding: 0 10px 0 10px;
+    font-family: 'Segoe ui', sans-serif;
+    border-radius: 6px;
+    margin-top: 15px;
+}
+
+.p1{
+    margin-left: 14px;
+}
+.p2{
+    margin-left: 54px;
+}
+.p3{
+    margin-left: 74px;
+}
+.p4{
+    margin-left: 58px;
+}
+.p5{
+    margin-left: 64px;
+}
