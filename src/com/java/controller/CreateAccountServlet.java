@@ -31,15 +31,8 @@ public class CreateAccountServlet extends HttpServlet {
 		String name = req.getParameter("name");
 		String username = req.getParameter("username");
 		String password = req.getParameter("password");
-		Double initDeposit= Double.parseDouble(req.getParameter("initDeposit"));
 		
 		logger.info("Account created successfully");
-		try (Connection c = DbUtil.getConnection(); Statement s = c.createStatement();) {
-			int rows = s.executeUpdate(" insert into user values ( '" + username + "', '" + name + "', '" + password + "')");
-		    logger.info("New Account inserted into the database");
-		} catch (SQLException e) {
-			writer.println("Problem saving credentials to db." + e.getMessage() + " Please try again later!");
-		}
 		
 		writer.println("<p>Account created successfuly<p>");
 		writer.println("<a href='login.html'>Go to Login</a>");
