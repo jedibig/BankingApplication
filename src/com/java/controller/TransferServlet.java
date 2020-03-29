@@ -16,7 +16,7 @@ import com.java.service.AccountUtilImp;
 /**
  * Servlet implementation class TransferServlet
  */
-@WebServlet("/account/transfer")
+@WebServlet(urlPatterns="/account/transfer")
 public class TransferServlet extends HttpServlet {
 	static Logger logger = Logger.getLogger(TransferServlet.class);
 	private static final long serialVersionUID = 1L;
@@ -33,6 +33,7 @@ public class TransferServlet extends HttpServlet {
 			return;
 		}
 		User user = (User) obj;
+
 		int receiverID = Integer.parseInt(request.getParameter("receiverNum"));
 		double amount = Double.parseDouble(request.getParameter("amount"));
 

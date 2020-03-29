@@ -34,6 +34,10 @@ public class DepositServlet extends HttpServlet {
 			return;
 		}
 		User user = (User) obj;
+		
+//		User user = new User();// For testing purposes.
+//		user.setAccNum(103);
+		
 		int senderID = Integer.parseInt(request.getParameter("senderNum"));
 		double amount = Double.parseDouble(request.getParameter("amount"));
 

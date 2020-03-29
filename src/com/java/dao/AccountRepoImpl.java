@@ -24,12 +24,14 @@ public class AccountRepoImpl implements AccountRepository{
 
 		try (Connection c = DbUtil.getConnection(); 
 			PreparedStatement s = c.prepareStatement(querySender);
-			PreparedStatement r = c.prepareStatement(querySender);) {
+			PreparedStatement r = c.prepareStatement(queryReceiver);) {
 			
 			logger.info("Updating balance of sender account");
 			s.setDouble(1, transaction.getNominal());
-			s.setLong(2, transaction.getSender());
-			int row_s = s.executeUpdate(querySender);
+			s.setInt(2, transaction.getSender());
+			logger.debug("Querying " + s);
+
+			int row_s = s.executeUpdate();
 			if(row_s < 0) {
 				throw new AccNumNotFound("Trying to update sender balance.");
 			}
@@ -44,9 +46,11 @@ public class AccountRepoImpl implements AccountRepository{
 			
 			
 			logger.info("Updating balance of receiver account");
-			s.setDouble(1, transaction.getNominal());
-			s.setLong(2, transaction.getReceiver());
-			int row_r = s.executeUpdate(queryReceiver);
+			r.setDouble(1, transaction.getNominal());
+			r.setLong(2, transaction.getReceiver());
+			logger.debug("Querying " + s.toString());
+
+			int row_r = r.executeUpdate();
 			if(row_r < 0) {
 				throw new AccNumNotFound("Trying to update receiver balance.");
 			}
@@ -60,15 +64,20 @@ public class AccountRepoImpl implements AccountRepository{
 
 	@Override
 	public double getBalance(User user) throws DatabaseException {
-		String query = "SELECT * FROM BANKING_ACCOUNT WHERE ACCNUM = " + user.getAccNum();
+		String query = "SELECT * FROM BANKING_ACCOUNT WHERE ACCNUMBER = " + user.getAccNum();
 		try (Connection c = DbUtil.getConnection(); 
 				Statement s = c.createStatement();) {
 			
 			logger.info("Getting current balance from user");
+			logger.debug("executing query " + query);
 			ResultSet rows = s.executeQuery(query);
+			logger.debug("query is executed.");
+
 			if(rows.next()) {
+				logger.debug("got a row.");
 				return rows.getDouble("balance");
 			} else {
+				logger.debug("no rows retrieved.");
 				throw new AccNumNotFound("Account number is wrong.");
 			}
 		} catch (SQLException e) {

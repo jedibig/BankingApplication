@@ -18,7 +18,7 @@ public class AccountUtilImp implements AccountUtility{
 	@Override
 	public boolean transferFund(Transaction transaction) {
 		try {
-			if (transaction.getNominal() != 0 && transaction.getReceiver() == 0 && transaction.getNominal() <= 0) {
+			if (transaction.getNominal() != 0 && transaction.getReceiver() != 0 && transaction.getNominal() >= 0) {
 				ari.transferMoney(transaction);
 				return true;
 			} else {
@@ -40,7 +40,7 @@ public class AccountUtilImp implements AccountUtility{
 	@Override
 	public boolean depositFund(Transaction transaction) {
 		try {
-			if (transaction.getNominal() != 0 && transaction.getReceiver() == 0 && transaction.getNominal() <= 0) {
+			if (transaction.getNominal() != 0 && transaction.getReceiver() != 0 && transaction.getNominal() >= 0) {
 				ari.transferMoney(transaction);
 				return true;
 			} else {
