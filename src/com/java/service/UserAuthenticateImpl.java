@@ -1,15 +1,19 @@
 package com.java.service;
 
+import com.java.dao.ImplementUserRepository;
 import com.java.dto.User;
 
 
 
 public class UserAuthenticateImpl implements UserAuthenticate{
 
+	ImplementUserRepository newRepository = new ImplementUserRepository();
 	@Override
 	public boolean registerNewUser(User user) {
-		
-		return false;
+		if(newRepository.insertUser(user) == true)
+			return true;
+		else
+			return false;
 	}
 
 	@Override
