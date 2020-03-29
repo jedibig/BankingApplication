@@ -28,12 +28,8 @@ public class BalanceFilter implements Filter{
 		boolean isBalanceRequest = req.getRequestURI().equals(balanceRequest);
 		boolean isLoggedIn = (session != null && session.getAttribute("username") != null);
 		
-		if(isLoggedIn && isBalanceRequest) {
-			logger.info("User already accessed balance page");
-			RequestDispatcher dispatcher = request.getRequestDispatcher("/account/balance");
-			dispatcher.forward(request, response);
-		}
-		else if(isLoggedIn || isBalanceRequest) {
+	
+		if(isLoggedIn || isBalanceRequest) {
 			logger.info("User is redirected to /account/balance");
 			chain.doFilter(request, response);
 		}

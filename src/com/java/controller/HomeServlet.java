@@ -22,9 +22,6 @@ public class HomeServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		PrintWriter writer = response.getWriter();
@@ -49,13 +46,10 @@ public class HomeServlet extends HttpServlet {
 		writer.println("<p>What would you like to do today ? </p>");
 		writer.println("<form action='balance'><input type='submit' value='See Balance'/></form>");
 		writer.println("<form action='trasferpage.html'><input type='submit' value='Transfer'/></form>");
-		writer.println("<form action='depositpage.html'><input type='submit' value='Deposit'/></form>");
+		writer.println("<form action='deposit' method='post'><input type='submit' value='Deposit'/></form>");
 		writer.println("</html>");
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);

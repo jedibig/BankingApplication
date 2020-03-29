@@ -23,7 +23,7 @@ public class RegisteredUserFilter implements Filter{
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
-		HttpSession session = req.getSession(false);
+		HttpSession session = req.getSession(true);
 		
 		boolean isLoggedIn = (session != null && session.getAttribute("signin") != null);
 		

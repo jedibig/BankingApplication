@@ -10,6 +10,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -24,7 +25,7 @@ public class DepositFilter implements Filter{
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpSession session = req.getSession(false);
 		
-		String depositRequest = req.getContextPath() + "/account";
+		String depositRequest = req.getContextPath() + "/account/deposit";
 		boolean isDepositRequest = req.getRequestURI().equals(depositRequest);
 		boolean isDepositPage = req.getRequestURI().endsWith("deposit");
 		boolean isLoggedIn = (session != null && session.getAttribute("username") != null);
@@ -40,8 +41,8 @@ public class DepositFilter implements Filter{
 		}
 		else {
 			logger.info("User has not loggend in properly. Redirected to log in page.");
-			RequestDispatcher dispatcher = request.getRequestDispatcher("login.html");
-			dispatcher.forward(request, response);
+			HttpServletResponse res = (HttpServletResponse) response;
+			res.sendRedirect("login.html");
 		}		
 	}
 }

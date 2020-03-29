@@ -26,7 +26,8 @@ public class GetBalanceServlet extends HttpServlet {
 		logger.info("Receive request to get balance");
 		Object obj = request.getSession().getAttribute("User");
 		if (!(obj instanceof User)) {
-			response.getWriter().write("USER INFORMATION NOT FOUND");
+			response.getWriter().write("<p>USER INFORMATION NOT FOUND</p><br>");
+			response.getWriter().write("<a href='login.html'>Return to log in page.</a>");
 			return;
 		}
 		User user = (User) obj;
