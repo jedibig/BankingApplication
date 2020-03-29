@@ -19,12 +19,17 @@ public class AccountRepoImpl implements AccountRepository{
 	
 	@Override
 	public void transferMoney(Transaction transaction) throws DatabaseException {
+		String queryTransID = "select Banking_trans_seq.nextval from dual;";
 		String querySender = "UPDATE Banking_Account set balance = balance - ? WHERE ACCNUMBER = ?";
 		String queryReceiver = "UPDATE Banking_Account set balance = balance + ? WHERE ACCNUMBER = ?";
 
 		try (Connection c = DbUtil.getConnection(); 
+			PreparedStatement t = c.prepareStatement(queryTransID);
 			PreparedStatement s = c.prepareStatement(querySender);
 			PreparedStatement r = c.prepareStatement(queryReceiver);) {
+			
+			logger.info("Getting transactionID");
+			
 			
 			logger.info("Updating balance of sender account");
 			s.setDouble(1, transaction.getNominal());

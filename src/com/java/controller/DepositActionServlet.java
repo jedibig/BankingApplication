@@ -28,6 +28,9 @@ public class DepositActionServlet extends GenericServlet{
 	@Override
 	public void service(ServletRequest request, ServletResponse response) throws ServletException, IOException {
 		logger.info("Deposit Action has been called.");
+		
+		logger.debug("SessionID in depactserv" + ((HttpServletRequest)request).getSession().getId());
+
 		int senderID = Integer.parseInt(request.getParameter("senderNum"));
 		double amount = Double.parseDouble(request.getParameter("amount"));
 		HttpServletRequest req = (HttpServletRequest) request;

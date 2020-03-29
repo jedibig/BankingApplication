@@ -19,7 +19,7 @@ import com.java.service.AccountUtilImp;
 /**
  * Servlet implementation class Deposit
  */
-@WebServlet("/account/deposit")
+@WebServlet("/account/depositt")
 public class DepositServlet extends HttpServlet {
 	static Logger logger = Logger.getLogger(DepositServlet.class);
 	static AccountUtilImp aui = new AccountUtilImp();

@@ -34,6 +34,7 @@ public class HomeServlet extends HttpServlet {
 		}
 		User user = (User) obj;
 				
+		logger.debug(request.getSession().getId());
 		
 		writer.println("<!DOCTYPE html>");
 		writer.println("<html>");
