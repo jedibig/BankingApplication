@@ -51,15 +51,15 @@ public class ImplementUserRepository implements UserRepository {
 	public boolean retrieveUser(User user) {
 		try (Connection c = DbUtil.getConnection(); Statement s = c.createStatement();) {
 
-			String query = "Select username, password from banking_user";
+			String query = "Select name, ACCNUMBER, password from banking_user where username = '" + user.getUsername() + "'";
+			logger.debug(query);
 			ResultSet rs = s.executeQuery(query);
-			while (rs.next()) {
-				String username = rs.getString("username");
-				String password = rs.getString("password");
-				if (username.equals(user.getUsername()) && password.equals(user.getPassword())) {
-					return true;
-				}
+			if(rs.next() && rs.getString("password").equals(user.getPassword())) {
+				user.setName(rs.getString("name"));
+				user.setAccNum(rs.getInt("ACCNUMBER"));
+				return true;
 			}
+			
 			System.out.println("Invalid username or password, check again");
 
 		} catch (SQLException e) {

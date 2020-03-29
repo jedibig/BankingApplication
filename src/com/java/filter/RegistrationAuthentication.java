@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
-@WebFilter("/*")
+@WebFilter("/account/*")
 
 public class RegistrationAuthentication implements Filter{
 	Logger logger = Logger.getLogger(RegistrationAuthentication.class);
