@@ -45,7 +45,7 @@ public class AccountRepoImpl implements AccountRepository{
 			User sender = new User();
 			sender.setAccNum(transaction.getSender());
 			double currentSenderBalance = getBalance(sender);
-			
+			logger.debug("Balance: " + currentSenderBalance );
 			if(currentSenderBalance < 0)
 				throw new InvalidBalanceException("Not enough balance from sender.");
 			

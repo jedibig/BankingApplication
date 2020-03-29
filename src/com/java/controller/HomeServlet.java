@@ -39,8 +39,8 @@ public class HomeServlet extends HttpServlet {
 		writer.println("<!DOCTYPE html>");
 		writer.println("<html>");
 		writer.println("<head>");
-		writer.println("<title>Home Page</title></head>");
-		writer.println("<link rel='stylesheet' href='sytle.css'>");
+		writer.println("<title>Home Page</title>");
+		writer.println("<link rel='stylesheet' href='sytle.css'></head>");
 		writer.println("<body>");
 		writer.println("<h2>Welcome " + user.getName() + "</h2>");
 		writer.println("<p>Your account number is " + user.getAccNum() + "</p><br>");

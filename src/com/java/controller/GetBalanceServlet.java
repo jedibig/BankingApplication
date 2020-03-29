@@ -27,7 +27,7 @@ public class GetBalanceServlet extends HttpServlet {
 		Object obj = request.getSession().getAttribute("User");
 		if (!(obj instanceof User)) {
 			response.getWriter().write("<p>USER INFORMATION NOT FOUND</p><br>");
-			response.getWriter().write("<a href='login.html'>Return to log in page.</a>");
+			response.getWriter().write("<a href='/BankingApp/login.html'>Return to log in page.</a>");
 			return;
 		}
 		User user = (User) obj;
@@ -39,10 +39,11 @@ public class GetBalanceServlet extends HttpServlet {
 		if (balance < 0)
 			response.getWriter().write("SERVER ERROR. PLEASE TRY AGAIN LATER!");
 		
-		response.getWriter().append("Balance for user ").append(user.getUsername()).append(": $").append(balance.toString());
+		response.getWriter().append("<html>Balance for user ").append(user.getUsername()).append(": $").append(balance.toString());
+		response.getWriter().write("<br/><a href='home'>Return to home page.</a><br/>");
 
 		
-		response.getWriter().append("Served at: ").append(request.getContextPath());		
+		response.getWriter().append("Served at: ").append(request.getContextPath()).append("</html>");		
 	}
 
 }

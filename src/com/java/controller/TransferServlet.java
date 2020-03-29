@@ -44,6 +44,7 @@ public class TransferServlet extends HttpServlet {
 			response.getWriter().write("CANNOT TRANSFER AT THIS TIME. PLEASE TRY AGAIN LATER");
 		} else {
 			response.getWriter().write("Success.");
+			response.getWriter().write("<form action='home'><input type='submit' value='Go to Home Page'/>'");
 
 		}
 	}

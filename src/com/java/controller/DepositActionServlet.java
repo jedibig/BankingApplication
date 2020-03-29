@@ -46,11 +46,11 @@ public class DepositActionServlet extends GenericServlet{
 		
 		if(possible) {
 			writer.print("<p>Your transaction was possible.<br> Check your updated balance through the home page.</p>");
-			writer.print("<form action='refereer'><input type='submit' value='Go to Home Page'/>'");
+			writer.print("<form action='home'><input type='submit' value='Go to Home Page'/>'");
 		}
 		else {
 			writer.print("<p>There were problems with this transaction.<br>Try again at a later time.</p>");
-			writer.print("<form action='refereer'><input type='submit' value='Go to Home Page'/>'");
+			writer.print("<form action='home'><input type='submit' value='Go to Home Page'/>'");
 		}
 		
 	}
