@@ -18,10 +18,8 @@ public class UserAuthenticateImpl implements UserAuthenticate{
 
 	@Override
 	public boolean authenticateUser(User user) {
-		if(newRepository.retrieveUser(user) == true)
-			return true;
-		else
-			return false;	
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 
