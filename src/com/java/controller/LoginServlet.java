@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.java.dto.User;
 import com.java.service.UserAuthenticateImpl;
@@ -33,7 +34,12 @@ public class LoginServlet extends HttpServlet{
 		signin.setPassword(password);
 		
 		UserAuthenticateImpl userAuth = new UserAuthenticateImpl();
-		//userAuth.authenticateUser(signin); 
+		if(userAuth.authenticateUser(signin) == true) {
+			HttpSession session = req.getSession();
+			session.setAttribute("singin", signin);
+			resp.sendRedirect("homeServlet");
+		}
+		
 		
 	}
 	
