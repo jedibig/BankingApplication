@@ -38,27 +38,30 @@ public class CreateAccountServlet extends HttpServlet {
 			System.out.println("Problem saving credentials to db." + e.getMessage() + " Please try again later!");
 		}
 		
-//		PrintWriter writer = resp.getWriter();
-//		String name = req.getParameter("name");
-//		String username = req.getParameter("username");
-//		String password = req.getParameter("password");
-//		
-//		User newUser = new User();
-//		newUser.setName(name);
-//		newUser.setUsername(username);
-//		newUser.setPassword(password);
-//		
-//		UserAuthenticateImpl user = new UserAuthenticateImpl();
-//		user.registerNewUser(newUser);
+		PrintWriter writer = resp.getWriter();
+		String name = req.getParameter("name");
+		String username = req.getParameter("username");
+		String password = req.getParameter("password");
 		
+		User newUser = new User();
+		newUser.setName(name);
+		newUser.setUsername(username);
+		newUser.setPassword(password);
+		
+		UserAuthenticateImpl user = new UserAuthenticateImpl();
+		boolean success = user.registerNewUser(newUser);
+		
+		if (success) {
+			writer.println("<p>Account created successfully<p>");
+			writer.println("<a href='login.html'>Go to Login</a>");
+		}
+		else {
+			writer.println("<p>Account was not created successfully<p><br><p>Please try creating your account again.</p>");
+			writer.println("<a href='register.html'>Go back to Register Page</a>");
+		}
 //		HttpSession session = req.getSession();
 //		session.setAttribute("newUser", newUser);
 //		resp.sendRedirect("newUser");
-		
-		//logger.info("Account created successfully");
-		
-		//writer.println("<p>Account created successfuly<p>");
-		//writer.println("<a href='login.html'>Go to Login</a>");
 		
 	}
 
