@@ -19,13 +19,15 @@ public class ImplementUserRepository implements UserRepository{
 		//this has to change to check if username already exist i think
 		try (Connection c = DbUtil.getConnection(); Statement s = c.createStatement();) {
 			logger.info("Attempting to save user into database");
+			int newrow = s.executeUpdate("insert into banking_account(accnumber, balance, userName) values(banking_acc.nextval , 400, '" + user.getUsername() + "')");
+			System.out.println("Account added");
+			ResultSet userInfo = s.executeQuery("select accnumber from banking_account where username = '" + user.getUsername() + "'");
 			int rows = s.executeUpdate("insert into banking_user(username, name, password, accNumber) values ('" + user.getUsername() + "', '" + 
-						user.getName() + "', '" +user.getPassword() + "', )");
-			int newrow = s.executeUpdate("insert into banking_account(accnumber, balance) values(, 400)");
+					user.getName() + "', '" +user.getPassword() + "', " + accNum + ")");
+			System.out.println("User added");
 			c.commit();
 			logger.info("Account created successfully");
 			return true;
-			
 		} catch (SQLException e) {
 			System.out.println("Problem saving credentials to db." + e.getMessage() + " Please try again later!");
 		return false;}
@@ -34,25 +36,24 @@ public class ImplementUserRepository implements UserRepository{
 
 	@Override
 	public boolean retrieveUser(User user) {
-				try (Connection c = DbUtil.getConnection(); Statement s = c.createStatement();) {
-					
-					String query = "Select username, password from banking_user";
-					ResultSet rs = s.executeQuery(query);
-					while(rs.next()) {
-						String username = rs.getString("username");
-						String password = rs.getString("password");
-						if(username.equals(user.getUsername()) && password.equals(user.getPassword())){
-							return true;
-						}
-					}
-					System.out.println("Invalid username or password, check again");
+			try (Connection c = DbUtil.getConnection(); Statement s = c.createStatement();) {
 				
-					
-				} catch (SQLException e) {
-					System.out.println("Problem retrieving credentials to db." + e.getMessage() + " Please try again!");
+			String query = "Select username, password from banking_user";
+			ResultSet rs = s.executeQuery(query);
+			while(rs.next()) {
+				String username = rs.getString("username");
+				String password = rs.getString("password");
+				if(username.equals(user.getUsername()) && password.equals(user.getPassword())){
+					return true;
 				}
+			}
+			System.out.println("Invalid username or password, check again");
 				
-				return false;
+					
+			} catch (SQLException e) {
+				System.out.println("Problem retrieving credentials to db." + e.getMessage() + " Please try again!");
+			}	
+			return false;
 	}
 
 }
