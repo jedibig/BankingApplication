@@ -60,7 +60,6 @@ public class ImplementUserRepository implements UserRepository {
 					return true;
 				}
 			}
-			System.out.println("Invalid username or password, check again");
 
 		} catch (SQLException e) {
 			System.out.println("Problem retrieving credentials to db." + e.getMessage() + " Please try again!");

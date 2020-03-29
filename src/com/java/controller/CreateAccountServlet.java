@@ -2,20 +2,15 @@ package com.java.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import com.java.dao.ImplementUserRepository;
 import com.java.dto.User;
 import com.java.service.UserAuthenticateImpl;
 
@@ -53,11 +48,6 @@ public class CreateAccountServlet extends HttpServlet {
 			writer.println("<p>Account was not created successfully<p><br><p>Please try creating your account again.</p>");
 			writer.println("<a href='register.html'>Go back to Register Page</a>");
 		}
-//		HttpSession session = req.getSession();
-//		session.setAttribute("newUser", newUser);
-//		resp.sendRedirect("newUser");
-		
-		
 	}
 
 }
