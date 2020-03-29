@@ -12,27 +12,34 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-@WebFilter("/account")
-public class AccountFilter implements Filter{
+import org.apache.log4j.Logger;
 
+@WebFilter("/account/deposit")
+public class DepositFilter implements Filter{
+	Logger logger = Logger.getLogger(DepositFilter.class);
+	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpSession session = req.getSession(false);
 		
-		String balanceRequest = req.getContextPath() + "/account/balance";
-		boolean isBalanceRequest = req.getRequestURI().equals(balanceRequest);
+		String depositRequest = req.getContextPath() + "/account";
+		boolean isDepositRequest = req.getRequestURI().equals(depositRequest);
+		boolean isDepositPage = req.getRequestURI().endsWith("deposit");
 		boolean isLoggedIn = (session != null && session.getAttribute("username") != null);
 		
-		if(isLoggedIn && isBalanceRequest) {
-			RequestDispatcher dispatcher = request.getRequestDispatcher("/account/balance");
+		if(isLoggedIn && (isDepositRequest || isDepositPage)) {
+			logger.info("User already accessed deposit page");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/account/deposit");
 			dispatcher.forward(request, response);
 		}
-		else if(isLoggedIn || isBalanceRequest) {
+		else if(isLoggedIn || isDepositRequest) {
+			logger.info("User is redirected to /account/deposit");
 			chain.doFilter(request, response);
 		}
 		else {
+			logger.info("User has not loggend in properly. Redirected to log in page.");
 			RequestDispatcher dispatcher = request.getRequestDispatcher("login.html");
 			dispatcher.forward(request, response);
 		}		
