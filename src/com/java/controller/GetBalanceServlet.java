@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class GetBalanceServlet
  */
-@WebServlet("/balance")
+@WebServlet("/account/balance")
 public class GetBalanceServlet extends HttpServlet {
 	static Logger logger = Logger.getLogger(GetBalanceServlet.class);
 	private static final long serialVersionUID = 1L;
