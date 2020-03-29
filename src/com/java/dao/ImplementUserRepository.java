@@ -22,9 +22,18 @@ public class ImplementUserRepository implements UserRepository{
 			int newrow = s.executeUpdate("insert into banking_account(accnumber, balance, userName) values(banking_acc.nextval , 400, '" + user.getUsername() + "')");
 			System.out.println("Account added");
 			ResultSet userInfo = s.executeQuery("select accnumber from banking_account where username = '" + user.getUsername() + "'");
+			if(!userInfo.next()) {
+				logger.error("Could not execute query");
+				return false;
+			}
+			int accNum = userInfo.getInt("Accnumber");
+		
 			int rows = s.executeUpdate("insert into banking_user(username, name, password, accNumber) values ('" + user.getUsername() + "', '" + 
-					user.getName() + "', '" +user.getPassword() + "', " + accNum + ")");
-			System.out.println("User added");
+					user.getName() + "', '" +user.getPassword() + "', " + accNum +")");
+			if (rows <= 0 ) {
+				logger.error("Could not execute query");
+				return false;
+			}
 			c.commit();
 			logger.info("Account created successfully");
 			return true;
