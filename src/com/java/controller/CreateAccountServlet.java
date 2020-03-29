@@ -43,16 +43,20 @@ public class CreateAccountServlet extends HttpServlet {
 		newUser.setPassword(password);
 		
 		UserAuthenticateImpl user = new UserAuthenticateImpl();
-		user.registerNewUser(newUser);
+		boolean success = user.registerNewUser(newUser);
 		
+		if (success) {
+			writer.println("<p>Account created successfully<p>");
+			writer.println("<a href='login.html'>Go to Login</a>");
+		}
+		else {
+			writer.println("<p>Account was not created successfully<p><br><p>Please try creating your account again.</p>");
+			writer.println("<a href='register.html'>Go back to Register Page</a>");
+		}
 //		HttpSession session = req.getSession();
 //		session.setAttribute("newUser", newUser);
 //		resp.sendRedirect("newUser");
 		
-		logger.info("Account created successfully");
-		
-		writer.println("<p>Account created successfuly<p>");
-		writer.println("<a href='login.html'>Go to Login</a>");
 		
 	}
 
