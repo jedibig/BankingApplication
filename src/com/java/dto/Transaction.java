@@ -19,5 +19,5 @@ import lombok.ToString;
 public class Transaction {
 	private int sender;
 	private int receiver;
-	private double nominal;
+	private int nominal;
 }

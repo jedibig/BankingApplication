@@ -5,18 +5,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.servlet.annotation.WebServlet;
+
 import org.apache.log4j.Logger;
 
+import com.java.controller.CreateAccountServlet;
 import com.java.dto.User;
 
-
+//@WebServlet("/newUser")
 public class ImplementUserRepository implements UserRepository{
 
 	static Logger logger = Logger.getLogger(ImplementUserRepository.class);
-
 	@Override
 	public boolean insertUser(User user) {
-		//this has to change to check if username already exist i think
+		//this has to change to check if username already exist
 		try (Connection c = DbUtil.getConnection(); Statement s = c.createStatement();) {
 			logger.info("Attempting to save user into database");
 			int newrow = s.executeUpdate("insert into banking_account(accnumber, balance, userName) values(banking_acc.nextval , 400, '" + user.getUsername() + "')");
@@ -37,16 +39,19 @@ public class ImplementUserRepository implements UserRepository{
 			c.commit();
 			logger.info("Account created successfully");
 			return true;
+			
 		} catch (SQLException e) {
 			System.out.println("Problem saving credentials to db." + e.getMessage() + " Please try again later!");
-		return false;}
+		}
+		return false;
 		
 	}
 
 	@Override
 	public boolean retrieveUser(User user) {
-			try (Connection c = DbUtil.getConnection(); Statement s = c.createStatement();) {
-				
+		//select all username and password
+		try (Connection c = DbUtil.getConnection(); Statement s = c.createStatement();) {
+			
 			String query = "Select username, password from banking_user";
 			ResultSet rs = s.executeQuery(query);
 			while(rs.next()) {
@@ -57,12 +62,13 @@ public class ImplementUserRepository implements UserRepository{
 				}
 			}
 			System.out.println("Invalid username or password, check again");
-				
-					
-			} catch (SQLException e) {
-				System.out.println("Problem retrieving credentials to db." + e.getMessage() + " Please try again!");
-			}	
-			return false;
+		
+			
+		} catch (SQLException e) {
+			System.out.println("Problem retrieving credentials to db." + e.getMessage() + " Please try again!");
+		}
+		
+		return false;
 	}
 
 }
