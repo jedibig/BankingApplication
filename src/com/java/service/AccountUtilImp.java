@@ -16,47 +16,56 @@ public class AccountUtilImp implements AccountUtility{
 	static AccountRepoImpl ari = new AccountRepoImpl();
 
 	@Override
-	public boolean transferFund(Transaction transaction) {
+	public int transferFund(Transaction transaction) {
 		try {
 			if (transaction.getNominal() != 0 && transaction.getReceiver() != 0 && transaction.getNominal() >= 0) {
 				ari.transferMoney(transaction);
-				return true;
 			} else {
 				logger.error("Invalid parameter.");
+				return 3;
 			}
 			
 		} catch (DatabaseException e){
-			if (e instanceof AccNumNotFound)
+			if (e instanceof AccNumNotFound){
 				logger.info("No corresponding account number found.");
-			else if (e instanceof InvalidBalanceException)
+				return 1;
+			}
+			else if (e instanceof InvalidBalanceException) {
 				logger.info("Insufficient Balance");
-			else
+				return 2;
+			}
+			else {
 				logger.error("Database error.");
-			
+				return -1;
+			}
 		}
-		return false;
+		return 0;
 	}
 
 	@Override
-	public boolean depositFund(Transaction transaction) {
+	public int depositFund(Transaction transaction) {
 		try {
 			if (transaction.getNominal() != 0 && transaction.getReceiver() != 0 && transaction.getNominal() >= 0) {
 				ari.transferMoney(transaction);
-				return true;
 			} else {
 				logger.error("Invalid parameter.");
+				return 3;
 			}
-			
 		} catch (DatabaseException e){
-			if (e instanceof AccNumNotFound)
+			if (e instanceof AccNumNotFound){
 				logger.info("No corresponding account number found.");
-			else if (e instanceof InvalidBalanceException)
+				return 1;
+			}
+			else if (e instanceof InvalidBalanceException) {
 				logger.info("Insufficient Balance");
-			else
+				return 2;
+			}
+			else {
 				logger.error("Database error.");
-			
+				return -1;
+			}
 		}
-		return false;
+		return 0;
 	}
 
 	@Override

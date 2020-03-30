@@ -43,7 +43,6 @@ public class GetBalanceServlet extends HttpServlet {
 		response.getWriter().write("<br/><a href='home'>Return to home page.</a><br/>");
 
 		
-		response.getWriter().append("Served at: ").append(request.getContextPath()).append("</html>");		
 	}
 
 }
