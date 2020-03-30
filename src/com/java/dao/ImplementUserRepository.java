@@ -8,13 +8,16 @@ import java.sql.Statement;
 import org.apache.log4j.Logger;
 
 import com.java.dto.User;
+import com.java.exception.PasswordMismatch;
+import com.java.exception.UsernameExistsException;
+import com.java.exception.UsernameNotFound;
 
 public class ImplementUserRepository implements UserRepository {
 
 	static Logger logger = Logger.getLogger(ImplementUserRepository.class);
 
 	@Override
-	public boolean insertUser(User user) {
+	public void insertUser(User user) throws UsernameExistsException {
 		// this has to change to check if username already exist i think
 		try (Connection c = DbUtil.getConnection(); Statement s = c.createStatement();) {
 			logger.info("Attempting to save user into database");
@@ -26,7 +29,6 @@ public class ImplementUserRepository implements UserRepository {
 					"select accnumber from banking_account where username = '" + user.getUsername() + "'");
 			if (!userInfo.next()) {
 				logger.error("Could not execute query");
-				return false;
 			}
 			int accNum = userInfo.getInt("Accnumber");
 
@@ -35,34 +37,35 @@ public class ImplementUserRepository implements UserRepository {
 							+ "', '" + user.getName() + "', '" + user.getPassword() + "', " + accNum + ")");
 			if (rows <= 0) {
 				logger.error("Could not execute query");
-				return false;
 			}
 			c.commit();
 			logger.info("Account created successfully");
-			return true;
 		} catch (SQLException e) {
-			System.out.println("Problem saving credentials to db." + e.getMessage() + " Please try again later!");
-			return false;
+			throw new UsernameExistsException("Username already exist");
 		}
-
 	}
 
 	@Override
-	public boolean retrieveUser(User user) {
+	public void retrieveUser(User user) throws PasswordMismatch, UsernameNotFound {
 		try (Connection c = DbUtil.getConnection(); Statement s = c.createStatement();) {
-
-			String query = "Select name, ACCNUMBER, password from banking_user where username = '" + user.getUsername() + "'";
+			String query = "Select username, name, ACCNUMBER, password from banking_user where username = '"
+					+ user.getUsername() + "'";
 			logger.debug(query);
-			ResultSet rs = s.executeQuery(query);
-			if(rs.next() && rs.getString("password").equals(user.getPassword())) {
-				user.setName(rs.getString("name"));
-				user.setAccNum(rs.getInt("ACCNUMBER"));
-				return true;
-			}
-		} catch (SQLException e) {
-			System.out.println("Problem retrieving credentials to db." + e.getMessage() + " Please try again!");
-		}
-		return false;
-	}
 
+			ResultSet rs = s.executeQuery(query);
+			if (rs.next()) {
+				if (rs.getString("password").equals(user.getPassword())) {
+					user.setName(rs.getString("name"));
+					user.setAccNum(rs.getInt("ACCNUMBER"));
+				} else {
+					throw new PasswordMismatch("Your password is incorrect");
+				}
+			} else {
+				throw new UsernameNotFound("Username not found");
+			}
+
+		} catch (SQLException e) {
+			logger.error("Problem retrieving credentials to db." + e.getMessage() + " Please try again!");
+		}
+	}
 }

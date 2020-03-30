@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import com.java.dto.User;
+import com.java.exception.UsernameExistsException;
 import com.java.service.UserAuthenticateImpl;
 
-//import com.java.dao.DbUtil;
 
 /**
  * Servlet implementation class CreateAccountServlet
@@ -38,16 +38,14 @@ public class CreateAccountServlet extends HttpServlet {
 		newUser.setPassword(password);
 		
 		UserAuthenticateImpl user = new UserAuthenticateImpl();
-		boolean success = user.registerNewUser(newUser);
-		
-		if (success) {
+		try {
+			user.registerNewUser(newUser);
 			writer.println("<p>Account created successfully<p>");
-			writer.println("<a href='index.html'>Go to Login</a>");
-		}
-		else {
-			writer.println("<p>Account was not created successfully<p><br><p>Please try creating your account again.</p>");
+			writer.println("<a href='/BankingApp'>Go to Login</a>");
+		} catch(UsernameExistsException e) {
+			writer.println("<p>Account already exist. Please change your username<p><br><p></p>");
 			writer.println("<a href='register.html'>Go back to Register Page</a>");
 		}
+		
 	}
-
 }
