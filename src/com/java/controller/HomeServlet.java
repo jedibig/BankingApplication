@@ -47,7 +47,8 @@ public class HomeServlet extends HttpServlet {
 		writer.println("<p>What would you like to do today ? </p>");
 		writer.println("<form action='balance'><input type='submit' value='See Balance'/></form>");
 		writer.println("<form action='/BankingApp/transferpage.html'><input type='submit' value='Transfer'/></form>");
-		writer.println("<form action='/BankingApp/depositpage.html'><input type='submit' value='Deposit'/></form>");
+		writer.println("<form action='/BankingApp/depositpage.html'><input type='submit' value='Deposit'/></form><br>"
+				+ "<form action='./logout'><input type='submit' value='Logout'/></form>'");
 		writer.println("</html>");
 	}
 
