@@ -22,9 +22,9 @@ public class ServletFilter implements Filter{
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
-		HttpSession session = req.getSession(false);
+		HttpSession session = req.getSession();
 		
-		boolean isLoggedIn = (session != null && session.getAttribute("signin") != null);
+		boolean isLoggedIn = (session != null && session.getAttribute("User") != null);
 		
 		if(isLoggedIn) {
 			logger.info("User is redirected to " + req.getRequestURI());
