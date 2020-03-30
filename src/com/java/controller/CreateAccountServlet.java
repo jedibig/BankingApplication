@@ -42,7 +42,7 @@ public class CreateAccountServlet extends HttpServlet {
 		
 		if (success) {
 			writer.println("<p>Account created successfully<p>");
-			writer.println("<a href='login.html'>Go to Login</a>");
+			writer.println("<a href='index.html'>Go to Login</a>");
 		}
 		else {
 			writer.println("<p>Account was not created successfully<p><br><p>Please try creating your account again.</p>");

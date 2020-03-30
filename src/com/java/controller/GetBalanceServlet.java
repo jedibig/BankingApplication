@@ -27,7 +27,7 @@ public class GetBalanceServlet extends HttpServlet {
 		Object obj = request.getSession().getAttribute("User");
 		if (!(obj instanceof User)) {
 			response.getWriter().write("<p>USER INFORMATION NOT FOUND</p><br>");
-			response.getWriter().write("<a href='/BankingApp/login.html'>Return to log in page.</a>");
+			response.getWriter().write("<a href='/BankingApp/index.html'>Return to log in page.</a>");
 			return;
 		}
 		User user = (User) obj;

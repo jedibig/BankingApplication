@@ -44,7 +44,7 @@ public class RegisteredUserFilter implements Filter{
 		}
 		else {
 			logger.info("The user has not logged in, redirected back to log in page.");
-			RequestDispatcher dispatcher = request.getRequestDispatcher("/login.html");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/BankingApp/login.html");
 			dispatcher.forward(request, response);
 		}
 		
