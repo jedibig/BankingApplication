@@ -49,17 +49,27 @@ public class DepositServ extends HttpServlet {
 		}
 		User user = (User) obj;
 		
-		Transaction t = new Transaction(senderID, user.getAccNum(), amount);
-		boolean possible = aui.depositFund(t);
 		
-		if(possible) {
-			writer.print("<p>Your transaction was possible.<br> Check your updated balance through the home page.</p>");
-			writer.print("<form action='home'><input type='submit' value='Go to Home Page'/>'");
+		Transaction t = new Transaction(senderID, user.getAccNum(), amount);
+		int retVal = aui.depositFund(t);
+		
+		response.getWriter().write("<html>");
+		switch(retVal) {
+			case 0:
+				response.getWriter().write("<html>Transaction is successful with id: " + t.getTransID());
+				break;
+			case 1:
+				response.getWriter().write("Corresponding account number cannot be found.");
+				break;
+			case 2:
+//				response.getWriter().write("You have insufficient balance.");
+//				break;
+			case 3:
+			case -1:
+			default:
+				response.getWriter().write("CANNOT TRANSFER AT THIS TIME. PLEASE TRY AGAIN LATER");
 		}
-		else {
-			writer.print("<p>There were problems with this transaction.<br>Try again at a later time.</p>");
-			writer.print("<form action='home'><input type='submit' value='Go to Home Page'/>'");
-		}
+		response.getWriter().write("<form action='home'><input type='submit' value='Go to Home Page'/></html>");
 	}
 
 }

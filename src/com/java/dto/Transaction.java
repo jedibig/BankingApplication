@@ -14,10 +14,15 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-@Data
-
 public class Transaction {
+	private int transID;
 	private int sender;
 	private int receiver;
 	private double nominal;
+	
+	public Transaction(int sender, int receiver, double nominal){
+		this.sender = sender;
+		this.receiver = receiver;
+		this.nominal = nominal;
+	}
 }

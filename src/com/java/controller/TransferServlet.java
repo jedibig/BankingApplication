@@ -40,13 +40,24 @@ public class TransferServlet extends HttpServlet {
 
 		
 		Transaction t = new Transaction(user.getAccNum(), receiverID, amount);
-		if (!aui.transferFund(t)) {
-			response.getWriter().write("CANNOT TRANSFER AT THIS TIME. PLEASE TRY AGAIN LATER");
-		} else {
-			response.getWriter().write("Success.");
-			response.getWriter().write("<form action='home'><input type='submit' value='Go to Home Page'/>'");
-
+		int retVal = aui.transferFund(t);
+		response.getWriter().write("<html>");
+		switch(retVal) {
+			case 0:
+				response.getWriter().write("<html>Transaction is successful with id: " + t.getTransID());
+				break;
+			case 1:
+				response.getWriter().write("Corresponding account number cannot be found.");
+				break;
+			case 2:
+				response.getWriter().write("You have insufficient balance.");
+				break;
+			case 3:
+			case -1:
+			default:
+				response.getWriter().write("CANNOT TRANSFER AT THIS TIME. PLEASE TRY AGAIN LATER");
 		}
+		response.getWriter().write("<form action='home'><input type='submit' value='Go to Home Page'/></html>");
 	}
 
 }
