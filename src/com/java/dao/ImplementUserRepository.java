@@ -1,6 +1,7 @@
 package com.java.dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -18,10 +19,36 @@ public class ImplementUserRepository implements UserRepository {
 
 	@Override
 	public void insertUser(User user) throws UsernameExistsException {
-		// this has to change to check if username already exist i think
-		try (Connection c = DbUtil.getConnection(); Statement s = c.createStatement();) {
+
+		String query = "insert into Banking_User (username, name, password) values (?, ?, ?)";
+		String query2 = "insert into Banking_Account(accNumber) values (accNum_sequence.nextval)";
+		String query3 = "update Banking_User set accNumber = accNum_sequence.currval where username = ?";
+
+		try (Connection c = DbUtil.getConnection();
+				PreparedStatement s = c.prepareStatement(query);
+				PreparedStatement s1 = c.prepareStatement(query2);
+				PreparedStatement s2 = c.prepareStatement(query3);)
+			{
+			
+			
+			s.setString(1, user.getUsername());
+			s.setString(2, user.getName());
+			s.setString(3, user.getPassword());
+			
+			s2.setString(1, user.getUsername());
+			
+			s.executeUpdate();
+			
+			s1.executeUpdate();
+			s2.executeUpdate();
+			
+			c.commit();
+			
+			
+			
 			logger.info("Attempting to save user into database");
 			System.out.println("Account added");
+			
 			ResultSet userInfo = s.executeQuery(
 					"select accnumber from banking_account where username = '" + user.getUsername() + "'");
 			if (!userInfo.next()) {
