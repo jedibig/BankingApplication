@@ -7,5 +7,5 @@ import com.java.exception.UsernameNotFound;
 
 public interface UserRepository {
 	public boolean insertUser(User user) throws DatabaseException;
-	public void retrieveUser(User user) throws PasswordMismatch, UsernameNotFound;
+	public User retrieveUser(User user) throws PasswordMismatch, UsernameNotFound, DatabaseException;
 }

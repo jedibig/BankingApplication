@@ -24,7 +24,7 @@ public class ServletFilter implements Filter{
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpSession session = req.getSession();
 		
-		boolean isLoggedIn = (session != null && session.getAttribute("User") != null);
+		boolean isLoggedIn = (session != null && session.getAttribute("signin") != null);
 		
 		if(isLoggedIn) {
 			logger.info("User is redirected to " + req.getRequestURI());
