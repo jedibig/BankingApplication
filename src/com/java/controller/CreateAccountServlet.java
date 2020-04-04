@@ -42,7 +42,10 @@ public class CreateAccountServlet extends HttpServlet {
 		try {
 			if (user.registerNewUser(newUser)) {
 				httpResponse += "<p>Account created successfully<p><a href='/BankingApp'>Click here</a> to go to login page.";
-			} 
+			} else {
+				httpResponse += "<p>Something happened on our end, please try again later.<p><br>";
+				httpResponse += "<a href='register.html'>Click here</a> to try again.</html>";
+			}
 			
 		} catch(UsernameExistsException e) {
 			httpResponse += "<p>Username already exist. Please change your username<p><br>";
