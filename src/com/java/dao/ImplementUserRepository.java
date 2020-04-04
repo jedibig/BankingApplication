@@ -9,6 +9,7 @@ import java.sql.Statement;
 import org.apache.log4j.Logger;
 
 import com.java.dto.User;
+import com.java.exception.DatabaseException;
 import com.java.exception.PasswordMismatch;
 import com.java.exception.UsernameExistsException;
 import com.java.exception.UsernameNotFound;
@@ -18,55 +19,72 @@ public class ImplementUserRepository implements UserRepository {
 	static Logger logger = Logger.getLogger(ImplementUserRepository.class);
 
 	@Override
-	public void insertUser(User user) throws UsernameExistsException {
-
+	public boolean insertUser(User user) throws DatabaseException {
+		
+		String checkExist = "select username from Banking_User where username = ?";
+		String getAccNumber = "select accNum_sequence.nextval as accNum from dual";
 		String query = "insert into Banking_User (username, name, password) values (?, ?, ?)";
-		String query2 = "insert into Banking_Account(accNumber) values (accNum_sequence.nextval)";
-		String query3 = "update Banking_User set accNumber = accNum_sequence.currval where username = ?";
+		String query2 = "insert into Banking_Account(accNumber) values (?)";
+		String query3 = "update Banking_User set accNumber = ? where username = ?";
+		
+		logger.info("inserting user to database");
 
 		try (Connection c = DbUtil.getConnection();
+				PreparedStatement check = c.prepareStatement(checkExist);
+				PreparedStatement getAccNum = c.prepareStatement(getAccNumber);
 				PreparedStatement s = c.prepareStatement(query);
 				PreparedStatement s1 = c.prepareStatement(query2);
-				PreparedStatement s2 = c.prepareStatement(query3);)
-			{
+				PreparedStatement s2 = c.prepareStatement(query3);){
+			
+			logger.debug("checking if username has existed");
+			check.setString(1, user.getUsername());
+			ResultSet rs = check.executeQuery();
+			if (rs.next()){
+				throw new UsernameExistsException("Username exist when trying to insert new user");
+			}
 			
 			
+			logger.debug("geting new accont number");
+			ResultSet rs1 = getAccNum.executeQuery();
+			int accNum;
+			if (rs1.next()){
+				accNum = rs1.getInt("accNum");
+			} else {
+				return false;
+			}
+			
+			logger.debug("inserting new user to db without account number");
 			s.setString(1, user.getUsername());
 			s.setString(2, user.getName());
 			s.setString(3, user.getPassword());
 			
-			s2.setString(1, user.getUsername());
+			if (s.executeUpdate() <= 0) {
+				return false;
+			}
 			
-			s.executeUpdate();
+			s1.setInt(1, accNum);
+			logger.debug("creating new bank account");
+			if (s1.executeUpdate() <= 0) {
+				return false;
+			}
 			
-			s1.executeUpdate();
-			s2.executeUpdate();
+			logger.debug("updating banking user account");
+			s2.setString(2, user.getUsername());
+			s2.setInt(1, accNum);
+			
+			if (s2.executeUpdate() <= 0) {
+				return false;
+			}
 			
 			c.commit();
-			
-			
-			
-			logger.info("Attempting to save user into database");
-			System.out.println("Account added");
-			
-			ResultSet userInfo = s.executeQuery(
-					"select accnumber from banking_account where username = '" + user.getUsername() + "'");
-			if (!userInfo.next()) {
-				logger.error("Could not execute query");
-			}
-			int accNum = userInfo.getInt("Accnumber");
 
-			int rows = s.executeUpdate(
-					"insert into banking_user(username, name, password, accNumber) values ('" + user.getUsername()
-							+ "', '" + user.getName() + "', '" + user.getPassword() + "', " + accNum + ")");
-			if (rows <= 0) {
-				logger.error("Could not execute query");
-			}
-			c.commit();
 			logger.info("Account created successfully");
 		} catch (SQLException e) {
-			throw new UsernameExistsException("Username already exist");
+			logger.error(e.getMessage());
+			throw new DatabaseException("Fatal error. Got SQLException");
 		}
+		
+		return true;
 	}
 
 	@Override
