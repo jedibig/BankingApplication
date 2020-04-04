@@ -15,7 +15,7 @@ import lombok.ToString;
 @ToString
 public class Transaction {
 	private int transID;
-	private int sender;
+	private int sender; 
 	private int receiver;
 	private double nominal;
 	

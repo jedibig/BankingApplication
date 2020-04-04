@@ -6,7 +6,7 @@ import com.java.dto.User;
 import com.java.exception.*;
 
 public interface AccountUtility{
-	void transferFund(Transaction transaction) throws DatabaseException;
-	void depositFund(Transaction transaction) throws DatabaseException;
 	double getBalance(User user) throws DatabaseException;
+	Transaction transferFund(int receiverNum, int accNum, double nominal) throws DatabaseException;
+	Transaction depositFund(int senderNum, int accNum, double nominal) throws DatabaseException;
 }

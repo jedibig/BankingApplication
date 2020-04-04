@@ -17,78 +17,65 @@ import com.java.exception.InvalidBalanceException;
 public class AccountRepoImpl implements AccountRepository{
 	static Logger logger = Logger.getLogger(AccountRepoImpl.class);
 	
-//	@Override
-//	public void transferMoney(Transaction transaction) throws DatabaseException {
-//		String queryTransID = "select Banking_trans_seq.nextval as transID from dual";
-//		String queryGetBalance = "select balance, version from Banking_Account where accnumber = ?";
-//		String querySender = "UPDATE Banking_Account set balance = balance - ? WHERE ACCNUMBER = ?";
-//		String queryReceiver = "UPDATE Banking_Account set balance = balance + ? WHERE ACCNUMBER = ?";
-//		String queryCreateTrans = "insert into BANKING_TRANSACTION values (?,?,?,?)";
-//
-//		try (Connection con = DbUtil.getConnection(); 
-//			PreparedStatement t = con.prepareStatement(queryTransID);
-//			PreparedStatement s = con.prepareStatement(querySender);
-//			PreparedStatement b = con.prepareStatement(queryGetBalance);
-//			PreparedStatement r = con.prepareStatement(queryReceiver);
-//			PreparedStatement c = con.prepareStatement(queryCreateTrans)) {
-//			
-//			logger.info("Getting transactionID");
-//			ResultSet rs = t.executeQuery();
-//			if(!rs.next()) {
-//				logger.error("sequence not set up correctly. problem with database. returning");
-//				throw new DatabaseException("faulty transID sequence");
-//			}
-//			int transID = rs.getInt("transID");
-//
-//			
-//			logger.info("Updating balance of sender account");
-//			s.setDouble(1, transaction.getNominal());
-//			s.setInt(2, transaction.getSender());
-//			logger.debug("Querying " + s);
-//
-//			int row_s = s.executeUpdate();
-//			if(row_s < 0) {
-//				throw new AccNumNotFound("Trying to update sender balance.");
-//			}
-//			
-//			logger.info("Getting balance of sender to make sure it's okay.");
-//			b.setInt(1, transaction.getSender());
-//			ResultSet rows = b.executeQuery();
-//			if (!rows.next()) {
-//				throw new AccNumNotFound("Trying to get sender balance.");
-//			}
-//			double currentSenderBalance = rows.getDouble("balance");
-//			logger.debug("Balance: " + currentSenderBalance );
-//			if(currentSenderBalance < 0)
-//				throw new InvalidBalanceException("Not enough balance from sender.");
-//			
-//			
-//			logger.info("Updating balance of receiver account");
-//			r.setDouble(1, transaction.getNominal());
-//			r.setLong(2, transaction.getReceiver());
-//			logger.debug("Querying " + s.toString());	
-//			int row_r = r.executeUpdate();
-//			if(row_r < 0) {
-//				throw new AccNumNotFound("Trying to update receiver balance.");
-//			}
-//			
-//			logger.info("Creating transaction on the database.");
-//			c.setInt(1, transID);
-//			c.setInt(2, transaction.getSender());
-//			c.setInt(3, transaction.getReceiver());
-//			c.setDouble(4, transaction.getNominal());
-//			if (c.executeUpdate() > 0) {
-//				logger.info("Successfull in transfering money.");
-//			}
-//			
-//			transaction.setTransID(transID);
-//			
-//			con.commit();
-//		} catch (SQLException e) {
-//			logger.error("Problem working with database. " + e.getMessage());
-//			throw new DatabaseException("Failed to do one of the update query.");
-//		}
-//	}
+	@Override
+	public int transferMoney(Transaction transaction) throws DatabaseException {
+		
+		String queryTransID = "select transID_sequence.nextval as TransID from dual;";
+		String queryGetBalance = "select balance, version from Banking_Account where accNumber = ?";
+		String querySender = "update Banking_Account set balance = balance - ?, version = version + 1 where accNumber = ? and version = ?";
+		String queryReceiver = "UPDATE Banking_Account set balance = balance + ? WHERE ACCNUMBER = ?";
+		String queryCreateTrans = "insert into Banking_Transaction (transactionID, senderID, receiverID, nominal) values (?, ?, ?, ?)";
+
+		int transId = 0;
+		double balance = 0;
+		int version = 0;
+		
+		try (Connection c = DbUtil.getConnection(); 
+			PreparedStatement s = c.prepareStatement(queryTransID);
+			PreparedStatement s1 = c.prepareStatement(queryGetBalance);
+			PreparedStatement s2 = c.prepareStatement(querySender);
+			PreparedStatement s3 = c.prepareStatement(queryReceiver);
+			PreparedStatement s4 = c.prepareStatement(queryCreateTrans);){
+			
+			
+			ResultSet rs = s.executeQuery();
+			if(rs.next()) {
+				transId = rs.getInt("TransID");
+			}
+			
+			s1.setInt(1, transaction.getSender());
+			
+			ResultSet rs1 = s1.executeQuery();
+			if(rs1.next()) {
+				balance = rs1.getDouble("balance");
+				version = rs1.getInt("version");
+				if(balance < transaction.getNominal())
+					throw new InvalidBalanceException("");
+			}
+			
+			s2.setDouble(1, balance);
+			s2.setInt(2, version);
+			s2.executeUpdate();
+			
+			s3.setDouble(1, balance);
+			s3.setInt(2, transaction.getSender());
+			s3.executeUpdate();
+			
+			s4.setInt(1, transId);
+			s4.setInt(2, transaction.getSender());
+			s4.setInt(3, transaction.getReceiver());
+			s4.setDouble(4, transaction.getNominal());
+			s4.executeUpdate();
+			
+			c.commit();
+			
+			return transId;
+			
+		} catch (SQLException e) {
+			logger.error("Problem working with database. " + e.getMessage());
+			throw new DatabaseException("Failed to do one of the update query.");
+		}
+	}
 
 	@Override
 	public double getBalance(User user) throws DatabaseException {
@@ -114,16 +101,24 @@ public class AccountRepoImpl implements AccountRepository{
 		}
 	}
 
-@Override
-public boolean checkAccountExist(int accNumber) {
-	// TODO Auto-generated method stub
-	return false;
-}
+	@Override
+	public String getAccountName(int accNumber) throws DatabaseException {
+		String query = "select name from Banking_User join Banking_Account BA on Banking_User.accNumber = BA.accNumber where BA.accNumber = ?";
+		try (Connection c = DbUtil.getConnection(); PreparedStatement s = c.prepareStatement(query);) {
 
-@Override
-public Transaction transferMoney(Transaction transaction) throws DatabaseException {
-	// TODO Auto-generated method stub
-	return null;
-}
-	
+			ResultSet rs = s.executeQuery();
+			String name = null;
+			if (rs.next()) {
+				name = rs.getString("name");
+			} else {
+				throw new AccNumNotFound("");
+			}
+			return name;
+		} catch (SQLException e) {
+			logger.error(e.getMessage());
+			throw new DatabaseException("Fatal Error with database");
+		}
+
+	}
+
 }

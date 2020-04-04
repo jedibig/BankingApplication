@@ -110,6 +110,8 @@ public class ImplementUserRepository implements UserRepository {
 				throw new UsernameNotFound("Account was not found with this username");
 			}
 			
+			c.commit();
+			
 			return obj;
 			
 		} catch (SQLException e) {
