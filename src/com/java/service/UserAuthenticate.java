@@ -6,6 +6,6 @@ import com.java.exception.UsernameExistsException;
 import com.java.exception.UsernameNotFound;
 
 public interface UserAuthenticate {
-	void registerNewUser(User user) throws UsernameExistsException;
-	void authenticateUser(User user) throws PasswordMismatch, UsernameNotFound;
+	User registerNewUser(User user) throws UsernameExistsException;
+	boolean authenticateUser(User user) throws PasswordMismatch, UsernameNotFound;
 }
