@@ -12,7 +12,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import com.java.dto.Transaction;
 import com.java.dto.User;
 import com.java.service.AccountUtilImp;
 

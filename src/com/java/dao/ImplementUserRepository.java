@@ -21,9 +21,6 @@ public class ImplementUserRepository implements UserRepository {
 		// this has to change to check if username already exist i think
 		try (Connection c = DbUtil.getConnection(); Statement s = c.createStatement();) {
 			logger.info("Attempting to save user into database");
-			int newrow = s.executeUpdate(
-					"insert into banking_account(accnumber, balance, userName) values(banking_acc.nextval , 400, '"
-							+ user.getUsername() + "')");
 			System.out.println("Account added");
 			ResultSet userInfo = s.executeQuery(
 					"select accnumber from banking_account where username = '" + user.getUsername() + "'");

@@ -2,10 +2,11 @@ package com.java.dao;
 
 import com.java.dto.Transaction;
 import com.java.dto.User;
-import com.java.exception.AccNumNotFound;
 import com.java.exception.DatabaseException;
+import com.java.exception.RepositoryException;
 
 public interface AccountRepository {
-	void transferMoney(Transaction transaction) throws Exception;
-	double getBalance(User user) throws DatabaseException;
+	boolean checkAccountExist(int accNumber);
+	Transaction transferMoney(Transaction transaction) throws RepositoryException;
+	double getBalance(User user) throws RepositoryException;
 }

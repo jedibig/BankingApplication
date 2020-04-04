@@ -20,8 +20,8 @@ public class AccountRepoImpl implements AccountRepository{
 	@Override
 	public void transferMoney(Transaction transaction) throws DatabaseException {
 		String queryTransID = "select Banking_trans_seq.nextval as transID from dual";
+		String queryGetBalance = "select balance, version from Banking_Account where accnumber = ?";
 		String querySender = "UPDATE Banking_Account set balance = balance - ? WHERE ACCNUMBER = ?";
-		String queryGetBalance = "select balance from Banking_Account where accnumber = ?";
 		String queryReceiver = "UPDATE Banking_Account set balance = balance + ? WHERE ACCNUMBER = ?";
 		String queryCreateTrans = "insert into BANKING_TRANSACTION values (?,?,?,?)";
 
