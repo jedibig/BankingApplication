@@ -26,7 +26,7 @@ public class HomeServlet extends HttpServlet {
 		
 		PrintWriter writer = response.getWriter();
 		
-		Object obj = request.getSession().getAttribute("User");
+		Object obj = request.getSession().getAttribute("signin");
 		logger.debug("sessionID: " + request.getSession().getId());
 		if (!(obj instanceof User)) {
 			response.getWriter().write("USER INFORMATION NOT FOUND");

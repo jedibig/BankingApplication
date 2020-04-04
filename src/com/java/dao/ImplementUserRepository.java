@@ -4,13 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import org.apache.log4j.Logger;
 
 import com.java.dto.User;
 import com.java.exception.DatabaseException;
-import com.java.exception.PasswordMismatch;
 import com.java.exception.UsernameExistsException;
 import com.java.exception.UsernameNotFound;
 
@@ -88,26 +86,35 @@ public class ImplementUserRepository implements UserRepository {
 	}
 
 	@Override
-	public void retrieveUser(User user) throws PasswordMismatch, UsernameNotFound {
-		try (Connection c = DbUtil.getConnection(); Statement s = c.createStatement();) {
-			String query = "Select username, name, ACCNUMBER, password from banking_user where username = '"
-					+ user.getUsername() + "'";
-			logger.debug(query);
-
-			ResultSet rs = s.executeQuery(query);
-			if (rs.next()) {
-				if (rs.getString("password").equals(user.getPassword())) {
-					user.setName(rs.getString("name"));
-					user.setAccNum(rs.getInt("ACCNUMBER"));
-				} else {
-					throw new PasswordMismatch("Your password is incorrect");
-				}
-			} else {
-				throw new UsernameNotFound("Username not found");
+	public User retrieveUser(User user) throws DatabaseException{
+		String query = "Select username, name, ACCNUMBER, password from banking_user where username = ?";
+		try (Connection c = DbUtil.getConnection();
+			 PreparedStatement s = c.prepareStatement(query);) {
+			
+			logger.info("Retrieving information based on client input.");
+			s.setString(1, user.getUsername());
+			
+			ResultSet result = s.executeQuery();
+			
+			User obj = null;
+			if(result.next()) {
+				logger.info("Information found based on client input.");
+				obj = new User();
+				obj.setUsername(result.getString("username"));
+				obj.setName(result.getString("name"));
+				obj.setPassword(result.getString("password"));
+				obj.setAccNum(result.getInt("ACCNUMBER"));
 			}
-
+			else {
+				logger.info("Information was not found based on client input.");
+				throw new UsernameNotFound("Account was not found with this username");
+			}
+			
+			return obj;
+			
 		} catch (SQLException e) {
 			logger.error("Problem retrieving credentials to db." + e.getMessage() + " Please try again!");
+			throw new DatabaseException("We had a problem gathering the information. Please try again.");
 		}
 	}
 }

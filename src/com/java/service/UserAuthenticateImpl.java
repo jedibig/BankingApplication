@@ -1,5 +1,7 @@
 package com.java.service;
 
+import org.apache.log4j.Logger;
+
 import com.java.dao.ImplementUserRepository;
 import com.java.dao.UserRepository;
 
@@ -7,13 +9,12 @@ import com.java.dao.UserRepository;
 import com.java.dto.User;
 import com.java.exception.DatabaseException;
 import com.java.exception.PasswordMismatch;
-import com.java.exception.UsernameExistsException;
-import com.java.exception.UsernameNotFound;
 
 
 public class UserAuthenticateImpl implements UserAuthenticate{
-
-	UserRepository userRepo = new ImplementUserRepository();
+	
+	static Logger logger = Logger.getLogger(UserAuthenticateImpl.class);
+	static UserRepository userRepo = new ImplementUserRepository();
 
 	@Override
 	public boolean registerNewUser(User user) throws DatabaseException {
@@ -21,11 +22,20 @@ public class UserAuthenticateImpl implements UserAuthenticate{
 	}
 
 	@Override
-	public User authenticateUser(User user) throws PasswordMismatch, UsernameNotFound {
-		// TODO Auto-generated method stub
-		return null;
+	public User authenticateUser(User user) throws DatabaseException {
+		User checkedUser = userRepo.retrieveUser(user);
+		
+		if(checkedUser != null) {
+			String userInput = user.getPassword();
+			String dbInput = checkedUser.getPassword();
+			
+			if(!userInput.equals(dbInput)) {
+				logger.info("Password did not match client input");
+				throw new PasswordMismatch("The password was incorrect, please try again.");
+			}
+			checkedUser.setPassword(null);
+		}
+		
+		return checkedUser;
 	}
-
-	
-
 }
