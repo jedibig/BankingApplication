@@ -12,20 +12,38 @@
 
   <servlet>
     <servlet-name>deposit_page</servlet-name>
-    <jsp-file>deposit_page.jsp</jsp-file>
+    <jsp-file>/deposit_page.jsp</jsp-file>
   </servlet>
   <servlet-mapping>
   	<servlet-name>deposit_page</servlet-name>
-    <url-pattern>/account/depositform</url-pattern>
+    <url-pattern>/account/depositpage</url-pattern>
   </servlet-mapping>
   
   <servlet>
     <servlet-name>transfer_page</servlet-name>
-    <jsp-file>transfer_page.jsp</jsp-file>
+    <jsp-file>/transfer_page.jsp</jsp-file>
   </servlet>
   <servlet-mapping>
   	<servlet-name>transfer_page</servlet-name>
     <url-pattern>/account/transferpage</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>transfer_confirmation</servlet-name>
+    <jsp-file>/transfer-confirmation.jsp</jsp-file>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>transfer_confirmation</servlet-name>
+    <url-pattern>/account/transfer-confirm</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>deposit_confirmation</servlet-name>
+    <jsp-file>/deposit-confirmation.jsp</jsp-file>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>deposit_confirmation</servlet-name>
+    <url-pattern>/account/deposit-confirm</url-pattern>
   </servlet-mapping>
   
 </web-app>

@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import com.java.dto.Transaction;
 import com.java.dto.User;
-import com.java.service.AccountUtilImp;
+import com.java.exception.AccNumNotFound;
+import com.java.exception.DatabaseException;
+import com.java.service.AccountUtility;
+import com.java.service.ServiceInstances;
 
 /**
  * Servlet implementation class TransferServlet
@@ -20,42 +22,40 @@ import com.java.service.AccountUtilImp;
 public class TransferServlet extends HttpServlet {
 	static Logger logger = Logger.getLogger(TransferServlet.class);
 	private static final long serialVersionUID = 1L;
-	static AccountUtilImp aui = new AccountUtilImp();
+	static AccountUtility aui = ServiceInstances.accountUtil;
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		logger.info("received request to transfer money");
-		Object obj = request.getSession().getAttribute("User");
+		Object obj = request.getSession().getAttribute("user");
 		if (!(obj instanceof User)) {
 			response.getWriter().write("<p>USER INFORMATION NOT FOUND</p><br>");
 			response.getWriter().write("<a href='login.html'>Return to log in page.</a>");
 			return;
 		}
-		User user = (User) obj;
 
 		int receiverID = Integer.parseInt(request.getParameter("receiverNum"));
 		double amount = Double.parseDouble(request.getParameter("amount"));
-
-	
-		int retVal = aui.transferFund(receiverID, user.getAccNum(), amount);
+				
 		response.getWriter().write("<html>");
-		switch(retVal) {
-			case 0:
-				response.getWriter().write("<html>Transaction is successful with id: " + t.getTransID());
-				break;
-			case 1:
-				response.getWriter().write("Corresponding account number cannot be found.");
-				break;
-			case 2:
-				response.getWriter().write("You have insufficient balance.");
-				break;
-			case 3:
-			case -1:
-			default:
-				response.getWriter().write("CANNOT TRANSFER AT THIS TIME. PLEASE TRY AGAIN LATER");
+		try {
+			logger.debug("getting recepient information.");
+			String name = aui.initiateTransfer(receiverID);
+			request.setAttribute("receiverName", name);
+			request.setAttribute("receiverAccNum",receiverID);
+			request.setAttribute("amount", amount);
+			
+			logger.debug("forwarding request.");
+			request.getRequestDispatcher("transfer-confirm").forward(request, response);
+			
+		} catch(AccNumNotFound e) {
+			response.getWriter().write("Corresponding receiver account number cannot be found.");
+		} catch(DatabaseException e) {
+			response.getWriter().write("CANNOT TRANSFER AT THIS TIME. PLEASE TRY AGAIN LATER");
 		}
+		
 		response.getWriter().write("<form action='home'><input type='submit' value='Go to Home Page'/></html>");
 	}
 

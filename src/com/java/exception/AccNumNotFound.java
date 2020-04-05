@@ -6,6 +6,5 @@ public class AccNumNotFound extends DatabaseException{
 
 	public AccNumNotFound(String errorMessage) {
 		super(errorMessage);
-		System.out.println("The entered Account Number was not found in our system.");
 	}
 }

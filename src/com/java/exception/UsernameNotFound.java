@@ -6,6 +6,5 @@ public class UsernameNotFound extends DatabaseException{
 
 	public UsernameNotFound (String errorMessage) {
 		super(errorMessage);
-		System.out.println("The specified username was not found in the system.");
 	}
 }

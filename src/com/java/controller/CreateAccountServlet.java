@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 import com.java.dto.User;
 import com.java.exception.DatabaseException;
 import com.java.exception.UsernameExistsException;
-import com.java.service.UserAuthenticateImpl;
+import com.java.service.ServiceInstances;
 import com.java.service.UserAuthenticate;
 
 
@@ -25,8 +25,8 @@ import com.java.service.UserAuthenticate;
 public class CreateAccountServlet extends HttpServlet {
 	static Logger logger = Logger.getLogger(CreateAccountServlet.class);
 	private static final long serialVersionUID = 1L;
-	
-	static UserAuthenticate user = new UserAuthenticateImpl();
+
+	static UserAuthenticate user = ServiceInstances.userAuth;
 
        
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -6,6 +6,5 @@ public class PasswordMismatch extends DatabaseException{
 
 	public PasswordMismatch(String errorMessage) {
 		super(errorMessage);
-		//System.out.println("The entered password is incorrect.");
 	}
 }

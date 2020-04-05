@@ -9,11 +9,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
 @WebFilter("/account/*")
-
 public class RegistrationAuthentication implements Filter{
 	Logger logger = Logger.getLogger(RegistrationAuthentication.class);
 	
@@ -25,8 +26,18 @@ public class RegistrationAuthentication implements Filter{
 		logger.debug(req.getMethod());
 		logger.info("Request generated for URI: " + req.getRequestURI());
 		logger.info("Time to fulfill request was: " + System.currentTimeMillis());
-		chain.doFilter(request, response);
 		
+		HttpSession session = req.getSession(true);
+
+		if(session != null && session.getAttribute("user") != null) {
+			logger.info("Session is valid.");
+			chain.doFilter(request, response);
+		}
+		else {
+			logger.info("User has not loggend in properly. Redirected to log in page.");
+			HttpServletResponse res = (HttpServletResponse) response;
+			res.sendRedirect("/BankingApp");
+		}			
 		logger.info("Response generated for url " + req.getRequestURI());
 		logger.info("Time generated to fulfill response: " + System.currentTimeMillis());
 	}

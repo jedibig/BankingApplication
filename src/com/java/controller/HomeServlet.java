@@ -26,29 +26,28 @@ public class HomeServlet extends HttpServlet {
 		
 		PrintWriter writer = response.getWriter();
 		
-		Object obj = request.getSession().getAttribute("signin");
-		logger.debug("sessionID: " + request.getSession().getId());
+		Object obj = request.getSession().getAttribute("user");
 		if (!(obj instanceof User)) {
 			response.getWriter().write("USER INFORMATION NOT FOUND");
+			response.getWriter().write("<a href='login.html'>Return to log in page.</a>");
 			return;
 		}
 		User user = (User) obj;
 				
-		logger.debug(request.getSession().getId());
 		
 		writer.println("<!DOCTYPE html>");
 		writer.println("<html>");
 		writer.println("<head>");
 		writer.println("<title>Home Page</title>");
-		writer.println("<link rel='stylesheet' href='sytle.css'></head>");
-		writer.println("<body>");
+		writer.println("<link rel='stylesheet' href='../style.css'></head>");
+		writer.println("<body><h1>B13 Banking Application</h1>");
 		writer.println("<h2>Welcome " + user.getName() + "</h2>");
 		writer.println("<p>Your account number is " + user.getAccNum() + "</p><br>");
 		writer.println("<p>What would you like to do today ? </p>");
 		writer.println("<form action='balance'><input type='submit' value='See Balance'/></form>");
-		writer.println("<form action='/BankingApp/transferpage.html'><input type='submit' value='Transfer'/></form>");
-		writer.println("<form action='/BankingApp/depositpage.html'><input type='submit' value='Deposit'/></form><br>"
-				+ "<form action='./logout'><input type='submit' value='Logout'/></form>'");
+		writer.println("<form action='transferpage'><input type='submit' value='Transfer'/></form>");
+		writer.println("<form action='depositpage'><input type='submit' value='Deposit'/></form><br>"
+				+ "<form action='./logout'><input type='submit' value='Logout'/></form>");
 		writer.println("</html>");
 	}
 

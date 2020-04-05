@@ -6,6 +6,5 @@ public class InvalidBalanceException extends DatabaseException{
 
 	public InvalidBalanceException(String errorMessage) {
 		super(errorMessage);
-		System.out.print("You have an invalid balance for transfer.");
 	}
 }

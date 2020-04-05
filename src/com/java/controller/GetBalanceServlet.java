@@ -3,7 +3,10 @@ package com.java.controller;
 import org.apache.log4j.Logger;
 
 import com.java.dto.User;
-import com.java.service.AccountUtilImp;
+import com.java.exception.DatabaseException;
+import com.java.service.AccountUtility;
+import com.java.service.ServiceInstances;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -19,12 +22,12 @@ import javax.servlet.http.HttpServletResponse;
 public class GetBalanceServlet extends HttpServlet {
 	static Logger logger = Logger.getLogger(GetBalanceServlet.class);
 	private static final long serialVersionUID = 1L;
-	static AccountUtilImp aui = new AccountUtilImp();
+	static AccountUtility aui = ServiceInstances.accountUtil;
 	
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		logger.info("Receive request to get balance");
-		Object obj = request.getSession().getAttribute("User");
+		Object obj = request.getSession().getAttribute("user");
 		if (!(obj instanceof User)) {
 			response.getWriter().write("<p>USER INFORMATION NOT FOUND</p><br>");
 			response.getWriter().write("<a href='/BankingApp/index.html'>Return to log in page.</a>");
@@ -32,14 +35,15 @@ public class GetBalanceServlet extends HttpServlet {
 		}
 		User user = (User) obj;
 		
-//		User user = new User();// For testing purposes.
-//		user.setAccNum(103);
 		
-		Double balance = aui.getBalance(user);
-		if (balance < 0)
+		try {
+			double balance = aui.getBalance(user);
+			response.getWriter().append("<html>Balance for user ").append(user.getUsername()).append(": $").append(""+balance);
+		} catch (DatabaseException e) {
 			response.getWriter().write("SERVER ERROR. PLEASE TRY AGAIN LATER!");
+
+		}
 		
-		response.getWriter().append("<html>Balance for user ").append(user.getUsername()).append(": $").append(balance.toString());
 		response.getWriter().write("<br/><a href='home'>Return to home page.</a><br/>");
 
 		

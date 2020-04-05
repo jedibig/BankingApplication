@@ -20,15 +20,14 @@ public class AccountRepoImpl implements AccountRepository{
 	@Override
 	public int transferMoney(Transaction transaction) throws DatabaseException {
 		
-		String queryTransID = "select transID_sequence.nextval as TransID from dual;";
+		logger.debug("sending money from " + transaction.getSender() +" to " + transaction.getReceiver());
+		
+		String queryTransID = "select transID_sequence.nextval as transID from dual";
 		String queryGetBalance = "select balance, version from Banking_Account where accNumber = ?";
 		String querySender = "update Banking_Account set balance = balance - ?, version = version + 1 where accNumber = ? and version = ?";
 		String queryReceiver = "UPDATE Banking_Account set balance = balance + ? WHERE ACCNUMBER = ?";
 		String queryCreateTrans = "insert into Banking_Transaction (transactionID, senderID, receiverID, nominal) values (?, ?, ?, ?)";
 
-		int transId = 0;
-		double balance = 0;
-		int version = 0;
 		
 		try (Connection c = DbUtil.getConnection(); 
 			PreparedStatement s = c.prepareStatement(queryTransID);
@@ -37,35 +36,52 @@ public class AccountRepoImpl implements AccountRepository{
 			PreparedStatement s3 = c.prepareStatement(queryReceiver);
 			PreparedStatement s4 = c.prepareStatement(queryCreateTrans);){
 			
-			
+			logger.debug("getting new transaction id");
 			ResultSet rs = s.executeQuery();
-			if(rs.next()) {
-				transId = rs.getInt("TransID");
+			if(!rs.next()) {
+				return -1;
 			}
 			
+			int transId = rs.getInt("transID");
+
+			logger.debug("Checking the balance and the version");
 			s1.setInt(1, transaction.getSender());
-			
 			ResultSet rs1 = s1.executeQuery();
-			if(rs1.next()) {
-				balance = rs1.getDouble("balance");
-				version = rs1.getInt("version");
-				if(balance < transaction.getNominal())
-					throw new InvalidBalanceException("");
+			if(!rs1.next())
+				return -1;
+			
+			double balance = rs1.getDouble("balance");
+			int version = rs1.getInt("version");
+			logger.debug("balance is: " + balance);
+			if(balance < transaction.getNominal())
+				throw new InvalidBalanceException("");
+			
+			
+			
+			logger.debug("withdrawing money from the sender");
+			s2.setDouble(1, transaction.getNominal());
+			s2.setInt(2, transaction.getSender());
+			s2.setInt(3, version);
+			if (s2.executeUpdate() == 0) {
+				return -1;
+			}
+
+			
+			logger.debug("depositing money to the receiver " + transaction.getReceiver());
+			s3.setDouble(1, transaction.getNominal());
+			s3.setInt(2, transaction.getReceiver());
+			if (s3.executeUpdate() == 0) {
+				return -1;
 			}
 			
-			s2.setDouble(1, balance);
-			s2.setInt(2, version);
-			s2.executeUpdate();
-			
-			s3.setDouble(1, balance);
-			s3.setInt(2, transaction.getSender());
-			s3.executeUpdate();
-			
+			logger.debug("inserting transaction");
 			s4.setInt(1, transId);
 			s4.setInt(2, transaction.getSender());
 			s4.setInt(3, transaction.getReceiver());
 			s4.setDouble(4, transaction.getNominal());
-			s4.executeUpdate();
+			if (s4.executeUpdate() == 0) {
+				return -1;
+			}
 			
 			c.commit();
 			
@@ -104,7 +120,10 @@ public class AccountRepoImpl implements AccountRepository{
 	@Override
 	public String getAccountName(int accNumber) throws DatabaseException {
 		String query = "select name from Banking_User join Banking_Account BA on Banking_User.accNumber = BA.accNumber where BA.accNumber = ?";
-		try (Connection c = DbUtil.getConnection(); PreparedStatement s = c.prepareStatement(query);) {
+		try (Connection c = DbUtil.getConnection(); 
+			 PreparedStatement s = c.prepareStatement(query);) {
+
+			s.setInt(1, accNumber);
 
 			ResultSet rs = s.executeQuery();
 			String name = null;
