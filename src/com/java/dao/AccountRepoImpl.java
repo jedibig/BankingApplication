@@ -135,7 +135,7 @@ public class AccountRepoImpl implements AccountRepository{
 			return name;
 		} catch (SQLException e) {
 			logger.error(e.getMessage());
-			throw new DatabaseException("Fatal Error with database");
+			throw new DatabaseException("Fatal Error with database.");
 		}
 
 	}
