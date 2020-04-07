@@ -140,8 +140,10 @@ public class AccountRepoImpl implements AccountRepository{
 			}
 			return name;
 		} catch (SQLException e) {
-			logger.error("Problem retrieving account name from db: " + e.getMessage());
-			throw new DatabaseException("Failed to perform SQL operation");
+
+			logger.error(e.getMessage());
+			throw new DatabaseException("Fatal Error with database.");
+
 		}
 
 	}
