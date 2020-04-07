@@ -36,11 +36,18 @@ public class TransferServlet extends HttpServlet {
 			return;
 		}
 
-		int receiverID = Integer.parseInt(request.getParameter("receiverNum"));
-		double amount = Double.parseDouble(request.getParameter("amount"));
-				
-		response.getWriter().write("<html>");
+		if (request.getParameter("receiverNum") == null || request.getParameter("amount") == null) {
+			response.getWriter().append("Input is empty. Please try again")
+								.append("<form action='transferpage'><input type='submit' value='Go back'/></html>");
+			return;
+		}
+		
 		try {
+			int receiverID = Integer.parseInt(request.getParameter("receiverNum"));
+			double amount = Double.parseDouble(request.getParameter("amount"));
+			
+			response.getWriter().write("<html>");
+			
 			logger.debug("getting recepient information.");
 			String name = aui.initiateTransfer(receiverID);
 			request.setAttribute("receiverName", name);
@@ -49,14 +56,18 @@ public class TransferServlet extends HttpServlet {
 			
 			logger.debug("forwarding request.");
 			request.getRequestDispatcher("transfer-confirm").forward(request, response);
-			
+		
+		} catch (NumberFormatException e){
+			logger.error("error parsing input.");
+			response.getWriter().append("Invalid input. Please try again")
+								.append("<form action='transferpage'><input type='submit' value='Go back'/></html>");
 		} catch(AccNumNotFound e) {
-			response.getWriter().write("Corresponding receiver account number cannot be found.");
+			response.getWriter().append("Corresponding receiver account number cannot be found.");
 		} catch(DatabaseException e) {
-			response.getWriter().write("CANNOT TRANSFER AT THIS TIME. PLEASE TRY AGAIN LATER");
+			response.getWriter().append("CANNOT TRANSFER AT THIS TIME. PLEASE TRY AGAIN LATER");
 		}
 		
-		response.getWriter().write("<form action='home'><input type='submit' value='Go to Home Page'/></html>");
+		response.getWriter().append("<form action='home'><input type='submit' value='Go to Home Page'/></html>");
 	}
 
 }

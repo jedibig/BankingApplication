@@ -40,22 +40,26 @@ public class ProcessDepositServlet extends HttpServlet {
 			return;
 		}
 		User user = (User) obj;
+		
 		PrintWriter writer = response.getWriter();
+		
+		if (request.getParameter("senderNum") == null || request.getParameter("amount") == null) {
+			response.getWriter().append("Input is empty. Please try again")
+								.append("<form action='transferpage'><input type='submit' value='Go back'/></html>");
+			return;
+		}
 	
 		int senderID = Integer.parseInt(request.getParameter("senderNum"));
 		double amount = Double.parseDouble(request.getParameter("amount"));
+		
 		logger.debug("user acc number: " + user.getAccNum());
 		JournalEntry journalEntry = new JournalEntry(senderID, user.getAccNum(), amount);
 
 		try {
 			journalEntry = aui.depositFund(journalEntry);
-			if (journalEntry == null) {
-				writer.write("<p>Something happened on our end. please try again later.</p>");
-			} else {
-				writer.write("<p>Transaction successful with id " + journalEntry.getTransID() + "</p>");
-			}
-//		} catch (InvalidBalanceException e) {
-//			response.getWriter().write("You have insufficient balance.");
+			
+			writer.write("<p>Transaction successful with id " + journalEntry.getTransID() + "</p>");
+			
 		} catch(DatabaseException e) {
 			response.getWriter().write("<p>Cannot transfer at this time. Please try again later</p>");
 		}

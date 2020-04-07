@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import org.apache.log4j.Logger;
 
@@ -19,15 +18,12 @@ public class AccountRepoImpl implements AccountRepository{
 	
 	@Override
 	public int transferMoney(JournalEntry journalEntry) throws InvalidBalanceException, AccNumNotFound, DatabaseException {
-		
-		logger.debug("sending money from " + journalEntry.getSender() +" to " + journalEntry.getReceiver());
+				
 		
 		String queryTransID = "select transID_sequence.nextval as transID from dual";
 		String queryGetBalance = "select balance, version from Banking_Account where accNumber = ?";
-		//TODO update the version as well
-
 		String querySender = "update Banking_Account set balance = balance - ?, version = version + 1 where accNumber = ? and version = ?";
-		String queryReceiver = "UPDATE Banking_Account set balance = balance + ? WHERE ACCNUMBER = ?";
+		String queryReceiver = "UPDATE Banking_Account set balance = balance + ?, version = version + 1 WHERE ACCNUMBER = ?";
 		String queryCreateTrans = "insert into Banking_Transaction (transactionID, senderID, receiverID, nominal) values (?, ?, ?, ?)";
 
 		
@@ -41,8 +37,8 @@ public class AccountRepoImpl implements AccountRepository{
 			logger.debug("getting new transaction id");
 			ResultSet rs = s.executeQuery();
 			if(!rs.next()) {
-				//TODO throw an exception, instead of returning -1
-				return -1;
+				logger.error("Could not retrieve new transaction id from database");
+				throw new DatabaseException("getting next value failed.");
 			}
 			
 			int transId = rs.getInt("transID");
@@ -50,14 +46,18 @@ public class AccountRepoImpl implements AccountRepository{
 			logger.debug("Checking the balance and the version");
 			s1.setInt(1, journalEntry.getSender());
 			ResultSet rs1 = s1.executeQuery();
-			if(!rs1.next())
-				return -1;
+			if(!rs1.next()) {
+				logger.error("Account not found when checking sender balance");
+				throw new AccNumNotFound();
+			}
 			
 			double balance = rs1.getDouble("balance");
 			int version = rs1.getInt("version");
 			logger.debug("balance is: " + balance);
-			if(balance < journalEntry.getNominal())
-				throw new InvalidBalanceException("");
+			if(balance < journalEntry.getNominal()) {
+				logger.error("Sender balance is less than amount to be transfered.");
+				throw new InvalidBalanceException();
+			}
 			
 			
 			
@@ -66,7 +66,8 @@ public class AccountRepoImpl implements AccountRepository{
 			s2.setInt(2, journalEntry.getSender());
 			s2.setInt(3, version);
 			if (s2.executeUpdate() == 0) {
-				return -1;
+				logger.error("Account not found or version is invalid when withdrawing balance");
+				throw new DatabaseException("Account number not found or invalid balance version");
 			}
 
 			
@@ -74,7 +75,8 @@ public class AccountRepoImpl implements AccountRepository{
 			s3.setDouble(1, journalEntry.getNominal());
 			s3.setInt(2, journalEntry.getReceiver());
 			if (s3.executeUpdate() == 0) {
-				return -1;
+				logger.error("Account not found when depositing to receiver");
+				throw new AccNumNotFound();
 			}
 			
 			logger.debug("inserting transaction");
@@ -83,7 +85,8 @@ public class AccountRepoImpl implements AccountRepository{
 			s4.setInt(3, journalEntry.getReceiver());
 			s4.setDouble(4, journalEntry.getNominal());
 			if (s4.executeUpdate() == 0) {
-				return -1;
+				logger.error("Got 0 rows when trying to insert new transaction");
+				throw new DatabaseException("Failed to insert new transaction");
 			}
 			
 			c.commit();
@@ -91,32 +94,31 @@ public class AccountRepoImpl implements AccountRepository{
 			return transId;
 			
 		} catch (SQLException e) {
-			logger.error("Problem working with database. " + e.getMessage());
-			throw new DatabaseException("Failed to do one of the update query.");
+			logger.error("Problem working with database to transfer fund. " + e.getMessage());
+			throw new DatabaseException("Failed to perform SQL operation");
 		}
 	}
 
 	@Override
 	public double getBalance(User user) throws DatabaseException {
-		String query = "SELECT * FROM BANKING_ACCOUNT WHERE ACCNUMBER = " + user.getAccNum();
+		String query = "SELECT * FROM BANKING_ACCOUNT WHERE ACCNUMBER = ?";
 		try (Connection c = DbUtil.getConnection(); 
-				Statement s = c.createStatement();) {
+			PreparedStatement s = c.prepareStatement(query);) {
 			
 			logger.info("Getting current balance from user");
-			logger.debug("executing query " + query);
+			
+			s.setInt(1, user.getAccNum());
 			ResultSet rows = s.executeQuery(query);
-			logger.debug("query is executed.");
 
 			if(rows.next()) {
-				logger.debug("got a row.");
 				return rows.getDouble("balance");
 			} else {
-				logger.debug("no rows retrieved.");
+				logger.debug("no rows retrieved from querying balance.");
 				throw new AccNumNotFound();
 			}
 		} catch (SQLException e) {
 			logger.error("Problem retrieveing balance from db." + e.getMessage());
-			throw new DatabaseException("SQL Exception caught");
+			throw new DatabaseException("Failed to perform SQL operation");
 		}
 	}
 
@@ -133,12 +135,13 @@ public class AccountRepoImpl implements AccountRepository{
 			if (rs.next()) {
 				name = rs.getString("name");
 			} else {
+				logger.error("No corresponding account number found when getting account holder name.");
 				throw new AccNumNotFound();
 			}
 			return name;
 		} catch (SQLException e) {
-			logger.error(e.getMessage());
-			throw new DatabaseException("Fatal Error with database");
+			logger.error("Problem retrieving account name from db: " + e.getMessage());
+			throw new DatabaseException("Failed to perform SQL operation");
 		}
 
 	}

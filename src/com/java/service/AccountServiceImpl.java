@@ -1,5 +1,6 @@
 package com.java.service;
 
+
 import com.java.dto.JournalEntry;
 import com.java.dto.User;
 import com.java.exception.DatabaseException;
@@ -7,10 +8,11 @@ import com.java.exception.DatabaseException;
 import org.apache.log4j.Logger;
 
 import com.java.dao.AccountRepoImpl;
+import com.java.dao.AccountRepository;
 
 public class AccountServiceImpl implements AccountService {
 	static Logger logger = Logger.getLogger(AccountServiceImpl.class);
-	static AccountRepoImpl ari = new AccountRepoImpl();
+	static AccountRepository ari = new AccountRepoImpl();
 	
 
 	@Override
@@ -23,7 +25,7 @@ public class AccountServiceImpl implements AccountService {
 
 		int transId = ari.transferMoney(journalEntry);
 		journalEntry.setTransID(transId);
-		return transId == -1 ? null : journalEntry;  //TODO use optional objects to be returned instead of null
+		return journalEntry;  //TODO use optional objects to be returned instead of null
 
 	}
 
@@ -33,7 +35,7 @@ public class AccountServiceImpl implements AccountService {
 		
 		int transId = ari.transferMoney(journalEntry);
 		journalEntry.setTransID(transId);
-		return transId == -1 ? null : journalEntry;
+		return journalEntry;
 
 	}
 

@@ -39,6 +39,12 @@ public class ProcessTransferServlet extends HttpServlet {
 		}
 		
 		User user = (User) obj;
+		
+		if (request.getParameter("receiverNum") == null || request.getParameter("amount") == null) {
+			response.getWriter().append("Input is empty. Please try again")
+								.append("<form action='transferpage'><input type='submit' value='Go back'/></html>");
+			return;
+		}
 
 		int receiverID = Integer.parseInt(request.getParameter("receiverNum"));
 		double amount = Double.parseDouble(request.getParameter("amount"));

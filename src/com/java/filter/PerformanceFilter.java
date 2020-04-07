@@ -9,14 +9,13 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+
 
 import org.apache.log4j.Logger;
 
-@WebFilter("/account/*")
-public class RegistrationAuthentication implements Filter{
-	Logger logger = Logger.getLogger(RegistrationAuthentication.class);
+@WebFilter("/*")
+public class PerformanceFilter implements Filter{
+	Logger logger = Logger.getLogger(PerformanceFilter.class);
 	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -27,17 +26,9 @@ public class RegistrationAuthentication implements Filter{
 		logger.info("Request generated for URI: " + req.getRequestURI());
 		logger.info("Time to fulfill request was: " + System.currentTimeMillis());
 		
-		HttpSession session = req.getSession(true);
+		req.getSession(true);
+		chain.doFilter(request, response);
 
-		if(session != null && session.getAttribute("user") != null) {
-			logger.info("Session is valid.");
-			chain.doFilter(request, response);
-		}
-		else {
-			logger.info("User has not loggend in properly. Redirected to log in page.");
-			HttpServletResponse res = (HttpServletResponse) response;
-			res.sendRedirect("/BankingApp");
-		}			
 		logger.info("Response generated for url " + req.getRequestURI());
 		logger.info("Time generated to fulfill response: " + System.currentTimeMillis());
 	}
