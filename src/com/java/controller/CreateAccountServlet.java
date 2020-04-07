@@ -30,16 +30,30 @@ public class CreateAccountServlet extends HttpServlet {
 
        
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO Validations shoud be done both on the client side and server side
 		
-		String name = req.getParameter("name");
-		String username = req.getParameter("username");
-		String password = req.getParameter("password");
+		String name = req.getParameter("name").trim();
+		String username = req.getParameter("username").trim();
+		String password = req.getParameter("password").trim();
 		
 		User newUser = new User(username, password, name, 0);
 		
 		String httpResponse = "<html>";
 		try {
+			if(username == null && password == null && name == null) {
+				httpResponse += "<p>Provide information in the provided fields.</p>";
+				throw new DatabaseException();
+			}
+			
+			if(username == null || !username.matches("^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$")) {
+				httpResponse += "<p>Provide a valid username</p>";
+				throw new DatabaseException();
+			}
+			
+			if(password == null || !password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{5,})")) {
+				httpResponse += "<p>Provide a valid password</p>";
+				throw new DatabaseException();
+			}
+			
 			if (user.registerNewUser(newUser)) {
 				httpResponse += "<p>Account created successfully<p><a href='/BankingApp'>Click here</a> to go to login page.";
 			} else {
@@ -52,7 +66,7 @@ public class CreateAccountServlet extends HttpServlet {
 			httpResponse += "<a href='register.html'>Click here</a> to try again.</html>";
 
 		} catch(DatabaseException e) {
-			httpResponse += "<p>Error registering user right now, please try again later.<p><br>";
+			httpResponse += "<p>Error registering user, please try again.<p><br>";
 			httpResponse += "<a href='register.html'>Click here</a> to try again.</html>";
 
 		}

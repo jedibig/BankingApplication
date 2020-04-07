@@ -11,6 +11,7 @@ import com.java.dto.User;
 import com.java.exception.DatabaseException;
 import com.java.exception.PasswordMismatch;
 import com.java.exception.UsernameExistsException;
+import com.java.exception.UsernameMismatch;
 import com.java.exception.UsernameNotFound;
 
 public class UserRepositoryImpl implements UserRepository {
@@ -88,7 +89,6 @@ public class UserRepositoryImpl implements UserRepository {
 
 	@Override
 	public User retrieveUser(User user) throws DatabaseException{
-		//TODO should check password is correct??
 
 		String query = "Select username, name, ACCNUMBER, password from banking_user where username = ?";
 		try (Connection c = DbUtil.getConnection();
@@ -99,7 +99,8 @@ public class UserRepositoryImpl implements UserRepository {
 			
 			ResultSet result = s.executeQuery();
 			
-			User obj = null;
+			User obj = new User("", "", "", 0);
+			
 			if(result.next()) {
 				logger.info("Information found based on client input.");
 				obj = new User();
@@ -117,7 +118,13 @@ public class UserRepositoryImpl implements UserRepository {
 				throw new UsernameNotFound("Account was not found with this username");
 			}
 			
-			c.commit();
+			if(!obj.getUsername().equals(user.getUsername())) {
+				throw new UsernameMismatch("Usernames was incorrect");
+			}
+			
+			if(!obj.getPassword().equals(user.getPassword())){
+				throw new PasswordMismatch("Password was incorrect");
+			}
 			
 			return obj;
 			
