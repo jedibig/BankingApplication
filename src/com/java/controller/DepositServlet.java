@@ -11,7 +11,8 @@ import org.apache.log4j.Logger;
 import com.java.dto.User;
 import com.java.exception.AccNumNotFound;
 import com.java.exception.DatabaseException;
-import com.java.service.AccountUtilImp;
+import com.java.service.AccountService;
+import com.java.service.ServiceUtility;
 
 /**
  * Servlet implementation class DepositServ
@@ -19,7 +20,7 @@ import com.java.service.AccountUtilImp;
 @WebServlet("/account/deposit")
 public class DepositServlet extends HttpServlet {
 	static Logger logger = Logger.getLogger(DepositServlet.class);
-	static AccountUtilImp aui = new AccountUtilImp();
+	static AccountService aui = ServiceUtility.accountUtil;
 	
 	private static final long serialVersionUID = 1L;
 

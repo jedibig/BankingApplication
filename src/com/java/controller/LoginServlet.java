@@ -13,8 +13,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 import com.java.dto.User;
-import com.java.service.ServiceInstances;
-import com.java.service.UserAuthenticate;
+import com.java.service.ServiceUtility;
+import com.java.service.UserAuthenticationService;
 import com.java.exception.DatabaseException;
 import com.java.exception.PasswordMismatch;
 import com.java.exception.UsernameNotFound;
@@ -22,7 +22,7 @@ import com.java.exception.UsernameNotFound;
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet{
 	static Logger logger = Logger.getLogger(LoginServlet.class);
-	static UserAuthenticate userAuth = ServiceInstances.userAuth;
+	static UserAuthenticationService userAuth = ServiceUtility.userAuth;
 	private static final long serialVersionUID = 1L;
 	
 	@Override

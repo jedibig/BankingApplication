@@ -7,4 +7,8 @@ public class PasswordMismatch extends DatabaseException{
 	public PasswordMismatch(String errorMessage) {
 		super(errorMessage);
 	}
+	
+	public PasswordMismatch() {
+		this("Provided password does not match");
+	}
 }

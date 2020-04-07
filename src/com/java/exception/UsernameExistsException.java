@@ -7,5 +7,9 @@ public class UsernameExistsException extends DatabaseException{
 	public UsernameExistsException(String errorMessage) {
 		super(errorMessage);
 	}
+	
+	public UsernameExistsException() {
+		this("Username already exists");
+	}
 
 }

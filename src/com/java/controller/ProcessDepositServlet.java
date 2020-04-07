@@ -11,12 +11,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import com.java.dto.Transaction;
+import com.java.dto.JournalEntry;
 import com.java.dto.User;
 import com.java.exception.DatabaseException;
 
-import com.java.service.AccountUtility;
-import com.java.service.ServiceInstances;
+import com.java.service.AccountService;
+import com.java.service.ServiceUtility;
 
 /**
  * Servlet implementation class Deposit
@@ -24,7 +24,7 @@ import com.java.service.ServiceInstances;
 @WebServlet("/account/process-deposit")
 public class ProcessDepositServlet extends HttpServlet {
 	static Logger logger = Logger.getLogger(ProcessDepositServlet.class);
-	static AccountUtility aui = ServiceInstances.accountUtil;
+	static AccountService aui = ServiceUtility.accountUtil;
 
 	private static final long serialVersionUID = 1L;
        
@@ -45,14 +45,14 @@ public class ProcessDepositServlet extends HttpServlet {
 		int senderID = Integer.parseInt(request.getParameter("senderNum"));
 		double amount = Double.parseDouble(request.getParameter("amount"));
 		logger.debug("user acc number: " + user.getAccNum());
-		Transaction transaction = new Transaction(senderID, user.getAccNum(), amount);
+		JournalEntry journalEntry = new JournalEntry(senderID, user.getAccNum(), amount);
 
 		try {
-			transaction = aui.depositFund(transaction);
-			if (transaction == null) {
+			journalEntry = aui.depositFund(journalEntry);
+			if (journalEntry == null) {
 				writer.write("<p>Something happened on our end. please try again later.</p>");
 			} else {
-				writer.write("<p>Transaction successful with id " + transaction.getTransID() + "</p>");
+				writer.write("<p>Transaction successful with id " + journalEntry.getTransID() + "</p>");
 			}
 //		} catch (InvalidBalanceException e) {
 //			response.getWriter().write("You have insufficient balance.");

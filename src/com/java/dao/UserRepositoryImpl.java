@@ -12,9 +12,9 @@ import com.java.exception.DatabaseException;
 import com.java.exception.UsernameExistsException;
 import com.java.exception.UsernameNotFound;
 
-public class ImplementUserRepository implements UserRepository {
+public class UserRepositoryImpl implements UserRepository {
 
-	static Logger logger = Logger.getLogger(ImplementUserRepository.class);
+	static Logger logger = Logger.getLogger(UserRepositoryImpl.class);
 
 	@Override
 	public boolean insertUser(User user) throws DatabaseException {
@@ -87,6 +87,8 @@ public class ImplementUserRepository implements UserRepository {
 
 	@Override
 	public User retrieveUser(User user) throws DatabaseException{
+		//TODO should check password is correct??
+
 		String query = "Select username, name, ACCNUMBER, password from banking_user where username = ?";
 		try (Connection c = DbUtil.getConnection();
 			 PreparedStatement s = c.prepareStatement(query);) {

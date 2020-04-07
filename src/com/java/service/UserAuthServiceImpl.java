@@ -2,7 +2,7 @@ package com.java.service;
 
 import org.apache.log4j.Logger;
 
-import com.java.dao.ImplementUserRepository;
+import com.java.dao.UserRepositoryImpl;
 import com.java.dao.UserRepository;
 
 
@@ -11,10 +11,10 @@ import com.java.exception.DatabaseException;
 import com.java.exception.PasswordMismatch;
 
 
-public class UserAuthenticateImpl implements UserAuthenticate{
+public class UserAuthServiceImpl implements UserAuthenticationService{
 	
-	static Logger logger = Logger.getLogger(UserAuthenticateImpl.class);
-	static UserRepository userRepo = new ImplementUserRepository();
+	static Logger logger = Logger.getLogger(UserAuthServiceImpl.class);
+	static UserRepository userRepo = new UserRepositoryImpl();
 
 	@Override
 	public boolean registerNewUser(User user) throws DatabaseException {
@@ -26,6 +26,8 @@ public class UserAuthenticateImpl implements UserAuthenticate{
 		User checkedUser = userRepo.retrieveUser(user);
 		
 		if(checkedUser != null) {
+			//TODO move it to db layer
+
 			String userInput = user.getPassword();
 			String dbInput = checkedUser.getPassword();
 			

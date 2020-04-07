@@ -12,8 +12,8 @@ import org.apache.log4j.Logger;
 import com.java.dto.User;
 import com.java.exception.AccNumNotFound;
 import com.java.exception.DatabaseException;
-import com.java.service.AccountUtility;
-import com.java.service.ServiceInstances;
+import com.java.service.AccountService;
+import com.java.service.ServiceUtility;
 
 /**
  * Servlet implementation class TransferServlet
@@ -22,7 +22,7 @@ import com.java.service.ServiceInstances;
 public class TransferServlet extends HttpServlet {
 	static Logger logger = Logger.getLogger(TransferServlet.class);
 	private static final long serialVersionUID = 1L;
-	static AccountUtility aui = ServiceInstances.accountUtil;
+	static AccountService aui = ServiceUtility.accountUtil;
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
