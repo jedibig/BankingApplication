@@ -33,6 +33,7 @@ public class GetBalanceServlet extends HttpServlet {
 			response.getWriter().write("<a href='/BankingApp/index.html'>Return to log in page.</a>");
 			return;
 		}
+		
 		User user = (User) obj;
 		
 		

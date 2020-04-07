@@ -108,7 +108,7 @@ public class AccountRepoImpl implements AccountRepository{
 			logger.info("Getting current balance from user");
 			
 			s.setInt(1, user.getAccNum());
-			ResultSet rows = s.executeQuery(query);
+			ResultSet rows = s.executeQuery();
 
 			if(rows.next()) {
 				return rows.getDouble("balance");
