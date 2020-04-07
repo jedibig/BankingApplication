@@ -99,7 +99,7 @@ public class UserRepositoryImpl implements UserRepository {
 			
 			ResultSet result = s.executeQuery();
 			
-			User obj = new User("", "", "", 0);
+			User obj = new User();
 			
 			if(result.next()) {
 				logger.info("Information found based on client input.");
