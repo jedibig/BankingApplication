@@ -12,6 +12,7 @@ import com.java.dto.User;
 import com.java.exception.AccNumNotFound;
 import com.java.exception.DatabaseException;
 import com.java.service.AccountService;
+import com.java.service.AccountServiceImpl;
 import com.java.service.ServiceUtility;
 
 /**
@@ -20,7 +21,7 @@ import com.java.service.ServiceUtility;
 @WebServlet("/account/deposit")
 public class DepositServlet extends HttpServlet {
 	static Logger logger = Logger.getLogger(DepositServlet.class);
-	static AccountService aui = ServiceUtility.accountUtil;
+	static AccountService aui = new AccountServiceImpl();
 	
 	private static final long serialVersionUID = 1L;
 

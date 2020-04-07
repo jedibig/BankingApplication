@@ -4,12 +4,12 @@ import java.io.IOException;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -32,9 +32,8 @@ public class ServletFilter implements Filter{
 		}
 		else {
 			logger.info("User has not loggend in properly. Redirected to log in page.");
-			HttpServletResponse res = (HttpServletResponse) response;
-			//TODO use forward
-			res.sendRedirect("../login.html");
+			RequestDispatcher reqDispatch = request.getRequestDispatcher("../login.html");
+			reqDispatch.forward(request, response);
 		}		
 		
 	}

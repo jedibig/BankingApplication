@@ -17,6 +17,7 @@ import com.java.service.ServiceUtility;
 import com.java.service.UserAuthenticationService;
 import com.java.exception.DatabaseException;
 import com.java.exception.PasswordMismatch;
+import com.java.exception.UsernameMismatch;
 import com.java.exception.UsernameNotFound;
 
 @WebServlet("/login")
@@ -39,13 +40,16 @@ public class LoginServlet extends HttpServlet{
 		
 			try {
 				User check = userAuth.authenticateUser(signin);
-				if(check != null) {
+				if(check.getUsername().equals(username) && check.getPassword().equals(password)){
 					session.setAttribute("user", check);
 					resp.sendRedirect("account/home");
 				}
 				else {
 					writer.print("<p>You were unable to log in.</p>");
 				}
+			}
+			catch (UsernameMismatch e) {
+				writer.print("<p>The username was incorrect.</p>");
 			} catch (PasswordMismatch e) {
 				writer.print("<p>The password was incorrect.</p>");
 			} catch (UsernameNotFound e) {
