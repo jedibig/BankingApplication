@@ -7,4 +7,8 @@ public class InvalidBalanceException extends DatabaseException{
 	public InvalidBalanceException(String errorMessage) {
 		super(errorMessage);
 	}
+	
+	public InvalidBalanceException() {
+		super("Insufficient balance for corresponding account.");
+	}
 }

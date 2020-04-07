@@ -11,7 +11,8 @@ import org.apache.log4j.Logger;
 import com.java.dto.User;
 import com.java.exception.AccNumNotFound;
 import com.java.exception.DatabaseException;
-import com.java.service.AccountUtilImp;
+import com.java.service.AccountService;
+import com.java.service.ServiceUtility;
 
 /**
  * Servlet implementation class DepositServ
@@ -19,7 +20,7 @@ import com.java.service.AccountUtilImp;
 @WebServlet("/account/deposit")
 public class DepositServlet extends HttpServlet {
 	static Logger logger = Logger.getLogger(DepositServlet.class);
-	static AccountUtilImp aui = new AccountUtilImp();
+	static AccountService aui = ServiceUtility.accountUtil;
 	
 	private static final long serialVersionUID = 1L;
 
@@ -34,12 +35,19 @@ public class DepositServlet extends HttpServlet {
 			response.getWriter().write("<a href='login.html'>Return to log in page.</a>");
 			return;
 		}
+		
+		if (request.getParameter("senderNum") == null || request.getParameter("amount") == null) {
+			response.getWriter().append("Input is empty. Please try again")
+								.append("<form action='transferpage'><input type='submit' value='Go back'/></html>");
+			return;
+		}
 
-		int senderID = Integer.parseInt(request.getParameter("senderNum"));
-		double amount = Double.parseDouble(request.getParameter("amount"));
 				
 		response.getWriter().write("<html>");
 		try {
+			int senderID = Integer.parseInt(request.getParameter("senderNum"));
+			double amount = Double.parseDouble(request.getParameter("amount"));
+			
 			logger.debug("getting recepient information.");
 			String name = aui.initiateTransfer(senderID);
 			request.setAttribute("senderName", name);
@@ -49,6 +57,10 @@ public class DepositServlet extends HttpServlet {
 			logger.debug("forwarding request.");
 			request.getRequestDispatcher("deposit-confirm").forward(request, response);
 			
+		} catch (NumberFormatException e){
+			logger.error("error parsing input.");
+			response.getWriter().append("Invalid input. Please try again")
+								.append("<form action='transferpage'><input type='submit' value='Go back'/></html>");
 		} catch(AccNumNotFound e) {
 			response.getWriter().write("Corresponding receiver account number cannot be found.");
 		} catch(DatabaseException e) {

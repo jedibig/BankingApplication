@@ -13,8 +13,8 @@ import org.apache.log4j.Logger;
 import com.java.dto.User;
 import com.java.exception.DatabaseException;
 import com.java.exception.UsernameExistsException;
-import com.java.service.ServiceInstances;
-import com.java.service.UserAuthenticate;
+import com.java.service.ServiceUtility;
+import com.java.service.UserAuthenticationService;
 
 
 
@@ -26,11 +26,11 @@ public class CreateAccountServlet extends HttpServlet {
 	static Logger logger = Logger.getLogger(CreateAccountServlet.class);
 	private static final long serialVersionUID = 1L;
 
-	static UserAuthenticate user = ServiceInstances.userAuth;
+	static UserAuthenticationService user = ServiceUtility.userAuth;
 
        
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		// TODO Validations shoud be done both on the client side and server side
 		
 		String name = req.getParameter("name");
 		String username = req.getParameter("username");

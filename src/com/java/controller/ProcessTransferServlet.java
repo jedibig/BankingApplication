@@ -9,12 +9,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import com.java.dto.Transaction;
+import com.java.dto.JournalEntry;
 import com.java.dto.User;
 import com.java.exception.DatabaseException;
 import com.java.exception.InvalidBalanceException;
-import com.java.service.AccountUtility;
-import com.java.service.ServiceInstances;
+import com.java.service.AccountService;
+import com.java.service.ServiceUtility;
 
 /**
  * Servlet implementation class ProcessTransferServlet
@@ -23,7 +23,7 @@ import com.java.service.ServiceInstances;
 public class ProcessTransferServlet extends HttpServlet {
 	static Logger logger = Logger.getLogger(ProcessTransferServlet.class);
 	private static final long serialVersionUID = 1L;
-	static AccountUtility aui = ServiceInstances.accountUtil;
+	static AccountService aui = ServiceUtility.accountUtil;
 
        
 	/**
@@ -39,19 +39,25 @@ public class ProcessTransferServlet extends HttpServlet {
 		}
 		
 		User user = (User) obj;
+		
+		if (request.getParameter("receiverNum") == null || request.getParameter("amount") == null) {
+			response.getWriter().append("Input is empty. Please try again")
+								.append("<form action='transferpage'><input type='submit' value='Go back'/></html>");
+			return;
+		}
 
 		int receiverID = Integer.parseInt(request.getParameter("receiverNum"));
 		double amount = Double.parseDouble(request.getParameter("amount"));
 //		logger.debug("sending money from "+ user.getAccNum() + " to " + receiverID );
-		Transaction transaction = new Transaction(user.getAccNum(), receiverID, amount);
+		JournalEntry journalEntry = new JournalEntry(user.getAccNum(), receiverID, amount);
 		
 		response.getWriter().write("<html>");
 		try {
-			transaction = aui.transferFund(transaction);
-			if (transaction == null) {
+			journalEntry = aui.transferFund(journalEntry);
+			if (journalEntry == null) {
 				response.getWriter().write("Something happened on our end. please try again later.");
 			} else {
-				response.getWriter().write("Transaction successful with id " + transaction.getTransID());
+				response.getWriter().write("Transaction successful with id " + journalEntry.getTransID());
 			}
 		} catch (InvalidBalanceException e) {
 			response.getWriter().write("You have insufficient balance.");

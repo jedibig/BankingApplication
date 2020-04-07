@@ -15,4 +15,9 @@ public class User {
 	private String password;
 	private String name;
 	private int accNum;
+//	public void setUsername(String username) {
+//		//TODO: validations on server side
+//		//check if the username is invalid: unique && length>6.
+//	}
+
 }

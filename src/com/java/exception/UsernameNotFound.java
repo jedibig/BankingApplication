@@ -7,4 +7,9 @@ public class UsernameNotFound extends DatabaseException{
 	public UsernameNotFound (String errorMessage) {
 		super(errorMessage);
 	}
+	
+	public UsernameNotFound () {
+		this("Corresponding username could not be found.");
+	}
+
 }

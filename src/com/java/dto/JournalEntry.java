@@ -13,13 +13,13 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class Transaction {
+public class JournalEntry {
 	private int transID;
 	private int sender; 
 	private int receiver;
 	private double nominal;
 	
-	public Transaction(int sender, int receiver, double nominal){
+	public JournalEntry(int sender, int receiver, double nominal){
 		this.sender = sender;
 		this.receiver = receiver;
 		this.nominal = nominal;

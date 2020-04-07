@@ -4,8 +4,8 @@ import org.apache.log4j.Logger;
 
 import com.java.dto.User;
 import com.java.exception.DatabaseException;
-import com.java.service.AccountUtility;
-import com.java.service.ServiceInstances;
+import com.java.service.AccountService;
+import com.java.service.ServiceUtility;
 
 import java.io.IOException;
 
@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 public class GetBalanceServlet extends HttpServlet {
 	static Logger logger = Logger.getLogger(GetBalanceServlet.class);
 	private static final long serialVersionUID = 1L;
-	static AccountUtility aui = ServiceInstances.accountUtil;
+	static AccountService aui = ServiceUtility.accountUtil;
 	
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
